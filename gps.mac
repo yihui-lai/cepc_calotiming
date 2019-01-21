@@ -47,4 +47,4 @@
 #/gps/ang/type iso
 
 #/tracking/verbose 1
-/run/beamOn 2
+/run/beamOn 5
