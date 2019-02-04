@@ -164,6 +164,18 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
   G4VSolid * worldS = new G4Box ("worldS", 0.5 * expHall_x, 0.5 * expHall_y, 0.5 * expHall_z) ;
   G4LogicalVolume * worldLV = new G4LogicalVolume (worldS, WoMaterial, "worldLV", 0, 0, 0) ;
   G4VPhysicalVolume * worldPV = new G4PVPlacement (0, G4ThreeVector (), worldLV, "worldPV", 0, false, 0, checkOverlaps) ;
+
+
+  // the Tracker
+  // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
+  G4VSolid* trackerS;
+  if (abs_thick > 0) 
+  { 
+	  trackerS = new G4Box  ("trackerS", core_radius_x*4, core_radius_y*4, 0.5*abs_thick);    
+	  G4LogicalVolume* trackerLV = new G4LogicalVolume (trackerS, MyMaterials::Silicon(), "trackerLV") ;
+	  new G4PVPlacement(0, G4ThreeVector(0.,0., -0.5 * (fibre_length + abs_thick) - 3*mm), trackerLV, "trackerPV", worldLV, false, 0, checkOverlaps) ;
+  }
+
   
   // the pre-shower
   // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
