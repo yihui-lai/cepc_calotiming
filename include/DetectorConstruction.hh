@@ -110,6 +110,7 @@ private:
   G4double depth;
   G4double cryst_dist;
   G4double abs_thick;
+  G4double trackerX0;
 
   G4int ecal_material;
   G4double ecal_front_length;
