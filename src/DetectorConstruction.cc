@@ -107,6 +107,7 @@ DetectorConstruction::DetectorConstruction (const string& configFileName)
   config.readInto(depth,	"depth");
   config.readInto(cryst_dist,	"cryst_dist");
   config.readInto(abs_thick,	"abs_thick");
+  config.readInto(trackerX0,	"trackerX0");
 
 
   config.readInto(ecal_material, 	"ecal_material");
@@ -169,11 +170,23 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
   // the Tracker
   // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
   G4VSolid* trackerS;
-  if (abs_thick > 0) 
+  float gapTRK_Timing = 20*mm;
+  if (trackerX0 > 0) 
   { 
-	  trackerS = new G4Box  ("trackerS", core_radius_x*4, core_radius_y*4, 0.5*abs_thick);    
+	  
+          int NLAYERS = 10;          
+          float X0 = 93.7*mm;          
+          
+          float layerSpacing = 1200/NLAYERS*mm;
+          float layerThick = trackerX0/NLAYERS;
+          
+          trackerS = new G4Box  ("trackerS", 50*mm, 50*mm, 0.5*layerThick);    
 	  G4LogicalVolume* trackerLV = new G4LogicalVolume (trackerS, MyMaterials::Silicon(), "trackerLV") ;
-	  new G4PVPlacement(0, G4ThreeVector(0.,0., -0.5 * (fibre_length + abs_thick) - 3*mm), trackerLV, "trackerPV", worldLV, false, 0, checkOverlaps) ;
+          
+          for (int iLayer = 0; iLayer < NLAYERS; iLayer++)
+          {
+            new G4PVPlacement(0, G4ThreeVector(0.,0., - layerSpacing*(NLAYERS-iLayer) - gapTRK_Timing ), trackerLV, Form("trackerPV_Layer%d", iLayer), worldLV, false, 0, checkOverlaps) ;
+          }
   }
 
   
@@ -223,7 +236,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
   }
 
   
-  // fibre gap for photon counting
+  // bar end gaps for photon counting
   // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----  
   //end gaps
   G4VSolid* gapLayerS;
@@ -255,7 +268,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
 
 
   
-  // Si detector for photon counting
+  // Si detector for photon counting at T1/T2 bar end
   // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
   G4VSolid * detLayerS = NULL;
   G4VSolid * detS      = NULL;
