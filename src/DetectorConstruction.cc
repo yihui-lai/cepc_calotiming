@@ -136,7 +136,7 @@ DetectorConstruction::DetectorConstruction (const string& configFileName)
   initializeMaterials();
 }
 
-//---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- 
+//---- ---- ---- ---- ---- ---- ---- ---- ----  ---- ---- ---- ---- ---- ---- 
 
 
 
