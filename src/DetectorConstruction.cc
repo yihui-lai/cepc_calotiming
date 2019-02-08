@@ -108,6 +108,7 @@ DetectorConstruction::DetectorConstruction (const string& configFileName)
   config.readInto(cryst_dist,	"cryst_dist");
   config.readInto(abs_thick,	"abs_thick");
   config.readInto(trackerX0,	"trackerX0");
+  config.readInto(services_thick,	"services_thick");
 
 
   config.readInto(ecal_material, 	"ecal_material");
@@ -118,6 +119,12 @@ DetectorConstruction::DetectorConstruction (const string& configFileName)
   config.readInto(ecal_timing_distance,	"ecal_timing_distance");
   config.readInto(ecal_det_size,	"ecal_det_size");
 
+  config.readInto(hcal_width,	"hcal_width");
+  config.readInto(hcalTile_width,	"hcalTile_width");
+  config.readInto(hcalAbs_1_thick,	"hcalAbs_1_thick");
+  config.readInto(hcalAbs_2_thick,	"hcalAbs_2_thick");
+  config.readInto(solenoid_thick,	"solenoid_thick");
+  config.readInto(hcalTile_thick,	"hcalTile_thick");
   
   if (core_material == 0)
   {
@@ -162,7 +169,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
   
   // The experimental Hall
   // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-  G4VSolid * worldS = new G4Box ("worldS", 0.5 * expHall_x, 0.5 * expHall_y, 0.5 * expHall_z) ;
+  G4VSolid * worldS = new G4Box ("worldS", 1.5 * expHall_x, 1.5 * expHall_y, 1.5 * expHall_z) ;
   G4LogicalVolume * worldLV = new G4LogicalVolume (worldS, WoMaterial, "worldLV", 0, 0, 0) ;
   G4VPhysicalVolume * worldPV = new G4PVPlacement (0, G4ThreeVector (), worldLV, "worldPV", 0, false, 0, checkOverlaps) ;
 
@@ -202,9 +209,32 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
   
 
 
+  // the cooling-services Dead material layer: 5 cm
+  // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
+  G4VSolid* servicesS;
+  float pos_Z_DT1 = -25*mm;
+  float pos_Z_DT2 =  35*mm;
+  float pos_Z_DE1 =  85*mm;
+  float pos_Z_DE2 =  ecal_timing_distance+ ecal_front_length + ecal_rear_length+ 25*mm;
+
+  if (services_thick > 0) 
+  { 
+	  servicesS = new G4Box  ("servicesS", 50*mm, 50*mm, 0.5*services_thick);    
+	  G4LogicalVolume* servicesLV = new G4LogicalVolume (servicesS, MyMaterials::Aluminium(), "servicesLV") ;
+          new G4PVPlacement(0, G4ThreeVector(0.,0., pos_Z_DT1), servicesLV, "servicesPV_T1", worldLV, false, 0, checkOverlaps) ;
+	  new G4PVPlacement(0, G4ThreeVector(0.,0., pos_Z_DT2), servicesLV, "servicesPV_T2", worldLV, false, 0, checkOverlaps) ;
+          new G4PVPlacement(0, G4ThreeVector(0.,0., pos_Z_DE1), servicesLV, "servicesPV_E1", worldLV, false, 0, checkOverlaps) ;
+	  new G4PVPlacement(0, G4ThreeVector(0.,0., pos_Z_DE2), servicesLV, "servicesPV_E2", worldLV, false, 0, checkOverlaps) ;
+  }
+
+
   //*********************
   //  TIMING LAYER
   //*********************
+
+
+  float pos_Z_T1 =  0*mm;
+  float pos_Z_T2 =  6*mm;
 
   G4RotationMatrix* piRotTiming_front = new G4RotationMatrix;
   G4RotationMatrix* piRotTiming_rear  = new G4RotationMatrix;
@@ -229,10 +259,10 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
  	float x = iBar*bar_spacing - bar_spacing*NBARS/2 + bar_spacing/2;	
 
 	//first layer
-  	corePV = new G4PVPlacement(piRotTiming_front, G4ThreeVector(x, 0.,0.), coreLV, Form("corePV_front_%d", iBar), worldLV, false, 0, checkOverlaps) ;
+  	corePV = new G4PVPlacement(piRotTiming_front, G4ThreeVector(x, 0.,pos_Z_T1), coreLV, Form("corePV_front_%d", iBar), worldLV, false, 0, checkOverlaps) ;
 
 	//second layer
-  	corePV = new G4PVPlacement(piRotTiming_rear, G4ThreeVector(0, x, 6), coreLV, Form("corePV_rear_%d", iBar), worldLV, false, 0, checkOverlaps) ;
+  	corePV = new G4PVPlacement(piRotTiming_rear, G4ThreeVector(0, x, pos_Z_T2), coreLV, Form("corePV_rear_%d", iBar), worldLV, false, 0, checkOverlaps) ;
   }
 
   
@@ -321,10 +351,13 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
 
 
 
-  //**********************************
+  //********************************************
   //  ELECTROMAGNETIC CALORIMETER
-  //**********************************
+  //********************************************
 
+
+//  float pos_Z_E1 =  0*mm;
+//  float pos_Z_E2 =  pos_Z_T26*mm;
 
   //double pointingAngle = 0.001976598*M_PI;	//~0.36° -- arctan (29.31/4720)
   double pointingAngle = 0.;	//~0.36° -- arctan (29.31/4720)
@@ -411,6 +444,148 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
 */
     }
   }
+
+
+
+
+  //********************************************
+  //  HADRONIC CALORIMETER
+  //********************************************
+
+  // HCAL solid
+  G4VSolid* hcalAbs_t1_S;
+  G4VSolid* hcalAbs_t2_S;
+
+  G4VSolid* solenoidS;
+  G4VSolid* hcalTileS;
+
+  hcalAbs_t1_S = new G4Box  ("hcalAbs_t1_S", hcal_width*0.5, hcal_width*0.5, hcalAbs_1_thick*0.5) ;    
+  hcalAbs_t2_S = new G4Box  ("hcalAbs_t2_S", hcal_width*0.5, hcal_width*0.5, hcalAbs_2_thick*0.5) ;    
+
+  solenoidS = new G4Box  ("solenoidS", hcal_width*0.5, hcal_width*0.5, solenoid_thick*0.5) ;    
+  hcalTileS = new G4Box  ("hcalTileS", hcalTile_width*0.5, hcalTile_width*0.5, hcalTile_thick*0.5) ;    
+
+
+  // HCAL logical
+  G4LogicalVolume*  hcalAbs_t1_LV = new G4LogicalVolume (hcalAbs_t1_S, MyMaterials::Aluminium(), " hcalAbs_t1_LV");
+  G4LogicalVolume*  hcalAbs_t2_LV = new G4LogicalVolume (hcalAbs_t2_S, MyMaterials::Iron(), " hcalAbs_t2_LV");
+
+  G4LogicalVolume*  solenoidLV = new G4LogicalVolume (solenoidS, MyMaterials::Iron(), " solenoidLV");
+  G4LogicalVolume*  hcalTileLV = new G4LogicalVolume (hcalTileS, MyMaterials::PlasticBC418(), " hcalTileLV");
+
+  
+
+  // HCAL physical
+  G4PVPlacement* hcalAbs_t1_PV;
+  G4PVPlacement* hcalAbs_t2_PV;
+  G4PVPlacement* solenoidPV;
+  G4PVPlacement* hcalTilePV;
+
+  float pos_Z_H1 =pos_Z_DE2+25*mm ;
+  float hLayer_gap = 10*mm;
+  
+  //HCAL 1 (front)
+  int NLAYERS_1 = 3;
+  int NTILES = 25;
+
+  if (hcal_width>0.1)
+ {
+ 	 for (int iLayer = 0; iLayer < NLAYERS_1; iLayer++)
+	{ 
+	
+ 		float z = pos_Z_H1 + hcalAbs_1_thick*0.5 + iLayer*( hcalAbs_1_thick + hLayer_gap);	
+
+		//passive layer of absorber
+  		hcalAbs_t1_PV = new G4PVPlacement(0, G4ThreeVector(0, 0, z), hcalAbs_t1_LV, Form("hcalAbs_t1_%d", iLayer), worldLV, false, 0, checkOverlaps) ;
+
+		//active layer of scintillator
+		G4double x_pos[625];
+	  	G4double y_pos[625];
+
+		 int iTile;
+		 for (int iX = 0; iX < NTILES; iX ++)
+		{
+		    for (int iY = 0; iY < NTILES; iY ++)
+		   {
+      
+		      iTile = NTILES*iX + iY;
+		      x_pos[iTile] = iX*hcalTile_width - hcalTile_width*NTILES/2. + hcalTile_width*0.5;
+		      y_pos[iTile] = iY*hcalTile_width - hcalTile_width*NTILES/2. + hcalTile_width*0.5;
+
+		      cout << " x_pos_tile [" <<iTile << "] = " << x_pos[iTile] << " :: y_pos_tile[" << iTile << "] = " << y_pos[iTile] << endl;
+      
+		      sprintf(name, "hcalTile_layer_%d_tile_%d", iLayer, iTile);
+      	      	      hcalTilePV = new G4PVPlacement(0, G4ThreeVector(x_pos[iTile], y_pos[iTile], z + (hcalAbs_1_thick+hLayer_gap)*0.5 ), hcalTileLV, name, worldLV, false, 0);
+		   }
+		}
+	}
+  }
+
+  //Solenoid
+  if (hcal_width>0.1)
+ {
+ 	 for (int iLayer = 0; iLayer < 1; iLayer++)
+	{	
+ 		float z = pos_Z_H1 +  NLAYERS_1*( hcalAbs_1_thick + hLayer_gap) + solenoid_thick*0.5;	
+		//passive layer of solenoid
+  		solenoidPV = new G4PVPlacement(0, G4ThreeVector(0, 0, z), solenoidLV, "solenoid_PV", worldLV, false, 0, checkOverlaps) ;
+		//active layer of scintillator
+		G4double x_pos[625];
+	  	G4double y_pos[625];
+		 int iTile;
+		 for (int iX = 0; iX < NTILES; iX ++)
+		{
+		    for (int iY = 0; iY < NTILES; iY ++)
+		   {
+      
+		      iTile = NTILES*iX + iY;
+		      x_pos[iTile] = iX*hcalTile_width - hcalTile_width*NTILES/2. + hcalTile_width*0.5;
+		      y_pos[iTile] = iY*hcalTile_width - hcalTile_width*NTILES/2. + hcalTile_width*0.5;      
+		      sprintf(name, "hcalTile_layer_%d_tile_%d", iLayer+NLAYERS_1, iTile);
+      	      	      hcalTilePV = new G4PVPlacement(0, G4ThreeVector(x_pos[iTile], y_pos[iTile], z + (solenoid_thick+hLayer_gap)*0.5 ), hcalTileLV, name, worldLV, false, 0);
+		   }
+		}
+	}
+  }
+
+
+
+  //HCAL 2 (rear)
+  int NLAYERS_2 = 11;
+
+  if (hcal_width>0.1)
+ {
+ 	 for (int iLayer = 0; iLayer < NLAYERS_2; iLayer++)
+	{ 
+	
+ 		float z = pos_Z_H1 + NLAYERS_1*( hcalAbs_1_thick + hLayer_gap) + (solenoid_thick+hLayer_gap) + hcalAbs_2_thick*0.5 + iLayer*( hcalAbs_2_thick + hLayer_gap);
+
+		//passive layer of absorber
+  		hcalAbs_t2_PV = new G4PVPlacement(0, G4ThreeVector(0, 0, z), hcalAbs_t2_LV, Form("hcalAbs_t2_%d", iLayer), worldLV, false, 0, checkOverlaps) ;
+
+		//active layer of scintillator
+		G4double x_pos[625];
+	  	G4double y_pos[625];
+
+		 int iTile;
+		 for (int iX = 0; iX < NTILES; iX ++)
+		{
+		    for (int iY = 0; iY < NTILES; iY ++)
+		   {
+      
+		      iTile = NTILES*iX + iY;
+		      x_pos[iTile] = iX*hcalTile_width - hcalTile_width*NTILES/2. + hcalTile_width*0.5;
+		      y_pos[iTile] = iY*hcalTile_width - hcalTile_width*NTILES/2. + hcalTile_width*0.5;
+
+		      cout << " x_pos_tile [" <<iTile << "] = " << x_pos[iTile] << " :: y_pos_tile[" << iTile << "] = " << y_pos[iTile] << endl;
+      
+		      sprintf(name, "hcalTile_layer_%d_tile_%d", iLayer+1+NLAYERS_1, iTile);
+      	      	      hcalTilePV = new G4PVPlacement(0, G4ThreeVector(x_pos[iTile], y_pos[iTile], z + (hcalAbs_2_thick+hLayer_gap)*0.5 ), hcalTileLV, name, worldLV, false, 0);
+		   }
+		}
+	}
+  }
+
   
   
   
@@ -462,6 +637,18 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
   VisAttGap -> SetForceWireframe(true);
   gapLV -> SetVisAttributes(VisAttGap);
 
+  G4VisAttributes* VisHCALTile = new G4VisAttributes(brass);
+  VisHCALTile -> SetVisibility(true);
+  VisHCALTile -> SetForceWireframe(true);
+  hcalTileLV -> SetVisAttributes(VisHCALTile);
+
+  G4VisAttributes* VisHCALAbs1 = new G4VisAttributes(gray);
+  VisHCALAbs1 -> SetVisibility(true);
+  hcalAbs_t1_LV -> SetVisAttributes(VisHCALAbs1);
+
+  G4VisAttributes* VisHCALAbs2 = new G4VisAttributes(red);
+  VisHCALAbs2 -> SetVisibility(true);
+  hcalAbs_t2_LV -> SetVisAttributes(VisHCALAbs2);
   
   
   if( detector )
