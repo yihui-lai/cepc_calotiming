@@ -111,6 +111,7 @@ private:
   G4double cryst_dist;
   G4double abs_thick;
   G4double trackerX0;
+  G4double services_thick;
 
   G4int ecal_material;
   G4double ecal_front_length;
@@ -119,6 +120,15 @@ private:
   G4double ecal_rear_face;
   G4double ecal_timing_distance;
   G4double ecal_det_size;
+
+  G4double hcal_width;
+  G4double hcalTile_width;
+  G4double hcalAbs_1_thick;
+  G4double hcalAbs_2_thick;
+  G4double solenoid_thick;
+  G4double hcalTile_thick;
+
+
 
   G4float toy_ly;
   G4float toy_decay;
