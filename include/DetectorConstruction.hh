@@ -88,7 +88,7 @@ private:
   G4double  expHall_z;
   
   G4int    world_material;
-  G4double fibre_length;      
+  G4double bar_length;      
   G4int    detector;
   
   G4double core_radius_x;
@@ -109,7 +109,6 @@ private:
     
   G4double depth;
   G4double cryst_dist;
-  G4double abs_thick;
   G4double trackerX0;
   G4double services_thick;
 
@@ -127,12 +126,6 @@ private:
   G4double hcalAbs_2_thick;
   G4double solenoid_thick;
   G4double hcalTile_thick;
-
-
-
-  G4float toy_ly;
-  G4float toy_decay;
-  G4float toy_rise;
   
   G4UniformMagField* B_field;
   G4bool   B_field_IsInitialized; 
