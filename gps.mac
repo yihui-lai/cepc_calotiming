@@ -15,7 +15,7 @@
 
 /gps/pos/halfx 0.1 mm
 /gps/pos/halfy 0.1 mm
-/gps/pos/centre 0 0 -1500 mm
+/gps/pos/centre 0 0 -1900 mm
 /gps/direction 0 0 1
 
 
