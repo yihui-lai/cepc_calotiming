@@ -38,8 +38,6 @@ public:
   static G4Material* LSO();
   static G4Material* LYSO();
 
-  static G4Material* ToyLSO(float toy_ly, float toy_decay, float toy_rise);
-
   static G4Material* PWO();
   static G4Material* SiO2_Ce();
 
