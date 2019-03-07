@@ -82,56 +82,46 @@ DetectorConstruction::DetectorConstruction (const string& configFileName)
   
   ConfigFile config (configFileName) ;
   
-  config.readInto(checkOverlaps,"checkOverlaps");
+  config.readInto(checkOverlaps,	"checkOverlaps");
   
   config.readInto(world_material,	"world_material");
-  config.readInto(fibre_length,  	"fibre_length");
-  config.readInto(detector,      	"detector");
+  config.readInto(bar_length,  	"bar_length");
   
-  config.readInto(core_radius_x,   "core_radius_x");
-  config.readInto(core_radius_y,   "core_radius_y");
-  config.readInto(core_material,   "core_material");
-  config.readInto(core_rIndex,     "core_rIndex");
-  config.readInto(core_absLength,  "core_absLength");
+  config.readInto(core_radius_x,   	"core_radius_x");
+  config.readInto(core_radius_y,   	"core_radius_y");
+  config.readInto(core_material,   	"core_material");
+  config.readInto(core_rIndex,      	"core_rIndex");
+  config.readInto(core_absLength, 	"core_absLength");
   
-  config.readInto(gap_l,         "gap_l");
-  config.readInto(gap_size_x,    "gap_size_x");
-  config.readInto(gap_size_y,    "gap_size_y");
-  config.readInto(gap_material,  "gap_material");
+  config.readInto(gap_l,         		"gap_l");
+  config.readInto(gap_size_x,    	"gap_size_x");
+  config.readInto(gap_size_y,    	"gap_size_y");
+  config.readInto(gap_material,  	"gap_material");
   
-  config.readInto(det_l,         "det_l");
-  config.readInto(det_size_x,    "det_size_x");
-  config.readInto(det_size_y,    "det_size_y");
-  config.readInto(det_material,  "det_material");
+  config.readInto(det_l,         		"det_l");
+  config.readInto(det_size_x,    	"det_size_x");
+  config.readInto(det_size_y,    	"det_size_y");
+  config.readInto(det_material,  	"det_material");
   
-  config.readInto(depth,	"depth");
-  config.readInto(cryst_dist,	"cryst_dist");
-  config.readInto(abs_thick,	"abs_thick");
-  config.readInto(trackerX0,	"trackerX0");
+  config.readInto(depth,			"depth");
+  config.readInto(cryst_dist,		"cryst_dist");
+  config.readInto(trackerX0,		"trackerX0");
   config.readInto(services_thick,	"services_thick");
 
-
   config.readInto(ecal_material, 	"ecal_material");
-  config.readInto(ecal_front_length,	"ecal_front_length");
-  config.readInto(ecal_rear_length,	"ecal_rear_length");
+  config.readInto(ecal_front_length,"ecal_front_length");
+  config.readInto(ecal_rear_length, "ecal_rear_length");
   config.readInto(ecal_front_face,	"ecal_front_face");
   config.readInto(ecal_rear_face,	"ecal_rear_face");
   config.readInto(ecal_timing_distance,	"ecal_timing_distance");
   config.readInto(ecal_det_size,	"ecal_det_size");
 
-  config.readInto(hcal_width,	"hcal_width");
+  config.readInto(hcal_width,		"hcal_width");
   config.readInto(hcalTile_width,	"hcalTile_width");
   config.readInto(hcalAbs_1_thick,	"hcalAbs_1_thick");
   config.readInto(hcalAbs_2_thick,	"hcalAbs_2_thick");
   config.readInto(solenoid_thick,	"solenoid_thick");
   config.readInto(hcalTile_thick,	"hcalTile_thick");
-  
-  if (core_material == 0)
-  {
-	  config.readInto(toy_ly,	"toy_ly");
-	  config.readInto(toy_decay,	"toy_decay");
-	  config.readInto(toy_rise,	"toy_rise");
-  }
   
   B_field_intensity = config.read<double>("B_field_intensity") * tesla ;
   
@@ -142,6 +132,17 @@ DetectorConstruction::DetectorConstruction (const string& configFileName)
   B_field_IsInitialized = false ;
   
   initializeMaterials();
+
+  CreateTree::Instance() -> inputTrackerX0 		= trackerX0; 
+  CreateTree::Instance() -> inputServiceAlmm 	= services_thick; 
+  CreateTree::Instance() -> inputTimingThick 	= core_radius_x*2; 
+  CreateTree::Instance() -> inputE1Thick 		= ecal_front_length; 
+  CreateTree::Instance() -> inputE2Thick 		= ecal_rear_length; 
+  CreateTree::Instance() -> inputE1Width 		= ecal_front_face; 
+  CreateTree::Instance() -> inputTimingECAL_dist = ecal_timing_distance; 
+
+
+
 }
 
 //---- ---- ---- ---- ---- ---- ---- ---- ----  ---- ---- ---- ---- ---- ---- 
@@ -169,7 +170,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
   
   // The experimental Hall
   // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-  G4VSolid * worldS = new G4Box ("worldS", 1.5 * expHall_x, 1.5 * expHall_y, 1.5 * expHall_z) ;
+  G4VSolid * worldS = new G4Box ("worldS", 5 * expHall_x, 5 * expHall_y, 5 * expHall_z) ;
   G4LogicalVolume * worldLV = new G4LogicalVolume (worldS, WoMaterial, "worldLV", 0, 0, 0) ;
   G4VPhysicalVolume * worldPV = new G4PVPlacement (0, G4ThreeVector (), worldLV, "worldPV", 0, false, 0, checkOverlaps) ;
 
@@ -177,18 +178,19 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
   // the Tracker
   // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
   G4VSolid* trackerS;
+  G4LogicalVolume* trackerLV = NULL;
   float gapTRK_Timing = 20*mm;
   if (trackerX0 > 0) 
   { 
 	  
-          int NLAYERS = 10;          
+          int NLAYERS = 6;          
           float X0 = 93.7*mm;          
           
-          float layerSpacing = 1200/NLAYERS*mm;
-          float layerThick = trackerX0/NLAYERS;
+          float layerSpacing = 1800/NLAYERS*mm;
+          float layerThick = trackerX0*X0/NLAYERS;
           
-          trackerS = new G4Box  ("trackerS", 50*mm, 50*mm, 0.5*layerThick);    
-	  G4LogicalVolume* trackerLV = new G4LogicalVolume (trackerS, MyMaterials::Silicon(), "trackerLV") ;
+          trackerS = new G4Box  ("trackerS", 200*mm, 200*mm, 0.5*layerThick);    
+	  trackerLV = new G4LogicalVolume (trackerS, MyMaterials::Silicon(), "trackerLV") ;
           
           for (int iLayer = 0; iLayer < NLAYERS; iLayer++)
           {
@@ -196,31 +198,21 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
           }
   }
 
-  
-  // the pre-shower
-  // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-  G4VSolid* absorberS;
-  if (abs_thick > 0) 
-  { 
-	  absorberS = new G4Box  ("absorberS", core_radius_x*4, core_radius_y*4, 0.5*abs_thick);    
-	  G4LogicalVolume* absorberLV = new G4LogicalVolume (absorberS, MyMaterials::Lead(), "absorberLV") ;
-	  new G4PVPlacement(0, G4ThreeVector(0.,0., -0.5 * (fibre_length + abs_thick) - 3*mm), absorberLV, "absorberPV", worldLV, false, 0, checkOverlaps) ;
-  }
-  
 
 
   // the cooling-services Dead material layer: 5 cm
   // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
   G4VSolid* servicesS;
-  float pos_Z_DT1 = -25*mm;
-  float pos_Z_DT2 =  35*mm;
-  float pos_Z_DE1 =  85*mm;
-  float pos_Z_DE2 =  ecal_timing_distance+ ecal_front_length + ecal_rear_length+ 25*mm;
+  G4LogicalVolume* servicesLV = NULL;
+  float pos_Z_DT1 = -20*mm;
+  float pos_Z_DT2 =  30*mm;
+  float pos_Z_DE1 =  70*mm;
+  float pos_Z_DE2 =  ecal_timing_distance+ ecal_front_length + ecal_rear_length+ 20*mm;
 
   if (services_thick > 0) 
   { 
-	  servicesS = new G4Box  ("servicesS", 50*mm, 50*mm, 0.5*services_thick);    
-	  G4LogicalVolume* servicesLV = new G4LogicalVolume (servicesS, MyMaterials::Aluminium(), "servicesLV") ;
+	  servicesS = new G4Box  ("servicesS", 100*mm, 100*mm, 0.5*services_thick);    
+	  servicesLV = new G4LogicalVolume (servicesS, MyMaterials::Aluminium(), "servicesLV") ;
           new G4PVPlacement(0, G4ThreeVector(0.,0., pos_Z_DT1), servicesLV, "servicesPV_T1", worldLV, false, 0, checkOverlaps) ;
 	  new G4PVPlacement(0, G4ThreeVector(0.,0., pos_Z_DT2), servicesLV, "servicesPV_T2", worldLV, false, 0, checkOverlaps) ;
           new G4PVPlacement(0, G4ThreeVector(0.,0., pos_Z_DE1), servicesLV, "servicesPV_E1", worldLV, false, 0, checkOverlaps) ;
@@ -246,26 +238,15 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
 
   int NBARS = 18;
   float bar_spacing = core_radius_x*2;	
+
+
+  //TIMING SOLID
   // the crystals
   // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
   G4VSolid* coreS;
-  coreS = new G4Box  ("coreS", core_radius_x, core_radius_y, 0.5*fibre_length) ;    
+  coreS = new G4Box  ("coreS", core_radius_x, core_radius_y, 0.5*bar_length) ;    
   G4LogicalVolume* coreLV = new G4LogicalVolume (coreS, CoMaterial, "coreLV");
 
-  G4PVPlacement* corePV;
-
-  for (int iBar = 0; iBar < NBARS; iBar++)
-  { 
- 	float x = iBar*bar_spacing - bar_spacing*NBARS/2 + bar_spacing/2;	
-
-	//first layer
-  	corePV = new G4PVPlacement(piRotTiming_front, G4ThreeVector(x, 0.,pos_Z_T1), coreLV, Form("corePV_front_%d", iBar), worldLV, false, 0, checkOverlaps) ;
-
-	//second layer
-  	corePV = new G4PVPlacement(piRotTiming_rear, G4ThreeVector(0, x, pos_Z_T2), coreLV, Form("corePV_rear_%d", iBar), worldLV, false, 0, checkOverlaps) ;
-  }
-
-  
   // bar end gaps for photon counting
   // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----  
   //end gaps
@@ -273,67 +254,82 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
   G4VSolid* gapS;
   if (gap_size_x == -1)
   {
-	gapLayerS = new G4Box  ("gapLayerS", core_radius_x, core_radius_y, 0.5*depth) ;
+//	gapLayerS = new G4Box  ("gapLayerS", core_radius_x, core_radius_y, 0.5*depth) ;
 	gapS      = new G4Box  (     "gapS", core_radius_x, core_radius_y, 0.5*(gap_l-depth)) ;
   }
   else
   {
-  	gapLayerS = new G4Box  ("gapLayerS", gap_size_x*0.5, gap_size_y*0.5, 0.5*depth) ;
+//  	gapLayerS = new G4Box  ("gapLayerS", gap_size_x*0.5, gap_size_y*0.5, 0.5*depth) ;
   	gapS      = new G4Box  (     "gapS", gap_size_x*0.5, gap_size_y*0.5, 0.5*(gap_l-depth)) ;
   }
-	
-  
-  G4RotationMatrix* piRot = new G4RotationMatrix;
-  double theta = M_PI/4.*rad;
-  double phi = 0;
-  piRot->rotateZ(theta);
-//  piRot->rotateX(phi);
 
-  G4LogicalVolume* gapLayerLV = new G4LogicalVolume (gapLayerS, GaMaterial, "gapLayerLV") ;
-  G4LogicalVolume* gapLV      = new G4LogicalVolume (gapS,      GaMaterial,      "gapLV") ;
-
-  //new G4PVPlacement (0, G4ThreeVector (0., 0., 0.5*fibre_length+0.5*depth ),          gapLayerLV, "gapLayerPV", worldLV, false, 0, checkOverlaps) ;
- // new G4PVPlacement (0, G4ThreeVector (0., 0., 0.5*fibre_length+depth+0.5*(gap_l-depth)), gapLV,      "gapPV", worldLV, false, 0, checkOverlaps) ;
- 
-
-
-  
   // Si detector for photon counting at T1/T2 bar end
   // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
   G4VSolid * detLayerS = NULL;
   G4VSolid * detS      = NULL;
-  G4LogicalVolume * detLayerLV = NULL;
-  G4LogicalVolume * detLV      = NULL;
-  if( detector )
-  {
-    if (det_size_x == -1)	//set the SiPM active area equal to the crystal surface
-    {
-      detLayerS = new G4Box ("detLayerS", core_radius_x*mm, core_radius_y*mm, 0.5*depth) ;
-      detS      = new G4Box (     "detS", core_radius_x*mm, core_radius_y*mm, 0.5*(det_l-depth)) ;
-    }
-    else if (det_size_x > 0)
-    {
-      detLayerS = new G4Box ("detLayerS", det_size_x*0.5, det_size_y*0.5, 0.5*depth) ;
-      detS      = new G4Box (     "detS", det_size_x*0.5, det_size_y*0.5, 0.5*(det_l-depth)) ;
-    }
 
-    detLayerLV = new G4LogicalVolume (detLayerS, DeMaterial, "detLayerLV") ;
-    detLV      = new G4LogicalVolume (detS,      DeMaterial,      "detLV") ;
-    
-  //  new G4PVPlacement (0, G4ThreeVector (0., 0., 0.5*fibre_length+gap_l+0.5*depth),          detLayerLV, "detLayerPV", worldLV, false, 0, checkOverlaps) ;
-  //  new G4PVPlacement (0, G4ThreeVector (0., 0., 0.5*fibre_length+gap_l+depth+0.5*(det_l-depth)), detLV,      "detPV", worldLV, false, 0, checkOverlaps) ;         
+  if (det_size_x == -1)	//set the SiPM active area equal to the crystal surface
+  {
+    detLayerS = new G4Box ("detLayerS", core_radius_x*mm, core_radius_y*mm, 0.5*depth) ;
+    detS      = new G4Box (     "detS", core_radius_x*mm, core_radius_y*mm, 0.5*(det_l-depth)) ;
+  }
+  else if (det_size_x > 0)
+  {
+    detLayerS = new G4Box ("detLayerS", det_size_x*0.5, det_size_y*0.5, 0.5*depth) ;
+    detS      = new G4Box (     "detS", det_size_x*0.5, det_size_y*0.5, 0.5*(det_l-depth)) ;
   }
 
-   //SURFACE STATE IMPLEMENTATION
+    
 
+  // TIMING LOGIC
+  G4LogicalVolume* gapLV      = new G4LogicalVolume (gapS,      GaMaterial,      "gapLV") ;
+//  G4LogicalVolume* gapLayerLV = new G4LogicalVolume (gapLayerS, GaMaterial, "gapLayerLV") ;
+
+  G4LogicalVolume * detLayerLV = NULL;
+  G4LogicalVolume * detLV      = NULL;
+  detLayerLV = new G4LogicalVolume (detLayerS, DeMaterial, "detLayerLV") ;
+  detLV          = new G4LogicalVolume (detS,      DeMaterial,      "detLV") ;
+
+
+
+  // TIMING PHYSICAL PLACEMENT
+
+  G4PVPlacement* corePV;
+
+  for (int iBar = 0; iBar < NBARS; iBar++)
+  { 
+ 	float x = iBar*bar_spacing - bar_spacing*NBARS/2; //+ bar_spacing/2;	
+	float y = - bar_spacing/2.;
+
+	//first crystal layer
+  	corePV = new G4PVPlacement(piRotTiming_front, G4ThreeVector(x, y, pos_Z_T1), coreLV, Form("corePV_front_%d", iBar), worldLV, false, 0, checkOverlaps) ;
+	//front, left and right gaps + sipms
+	new G4PVPlacement(piRotTiming_front, G4ThreeVector(x, y-bar_length*0.5-gap_l*0.5, pos_Z_T1), gapLV, Form("timingGap_front_1_PV_%d", iBar), worldLV, false, 0, checkOverlaps) ;
+	new G4PVPlacement(piRotTiming_front, G4ThreeVector(x, y+bar_length*0.5+gap_l*0.5, pos_Z_T1), gapLV, Form("timingGap_front_2_PV_%d", iBar), worldLV, false, 0, checkOverlaps) ;
+	new G4PVPlacement(piRotTiming_front, G4ThreeVector(x, y-bar_length*0.5-gap_l - det_l*0.5, pos_Z_T1), detLV, Form("timingDet_front_1_PV_%d", iBar), worldLV, false, 0, checkOverlaps) ;
+	new G4PVPlacement(piRotTiming_front, G4ThreeVector(x, y+bar_length*0.5+gap_l + det_l*0.5, pos_Z_T1), detLV, Form("timingDet_front_2_PV_%d", iBar), worldLV, false, 0, checkOverlaps) ;
+
+	//second crystal layer
+  	corePV = new G4PVPlacement(piRotTiming_rear, G4ThreeVector(y, x, pos_Z_T2), coreLV, Form("corePV_rear_%d", iBar), worldLV, false, 0, checkOverlaps) ;
+	//front, left and right gaps + sipms
+	new G4PVPlacement(piRotTiming_rear, G4ThreeVector(y-bar_length*0.5-gap_l*0.5, x, pos_Z_T2), gapLV, Form("timingGap_rear_1_PV_%d", iBar), worldLV, false, 0, checkOverlaps) ;
+	new G4PVPlacement(piRotTiming_rear, G4ThreeVector(y+bar_length*0.5+gap_l*0.5, x, pos_Z_T2), gapLV, Form("timingGap_rear_2_PV_%d", iBar), worldLV, false, 0, checkOverlaps) ;
+	new G4PVPlacement(piRotTiming_rear, G4ThreeVector(y-bar_length*0.5-gap_l - det_l*0.5, x, pos_Z_T2), detLV, Form("timingDet_rear_1_PV_%d", iBar), worldLV, false, 0, checkOverlaps) ;
+	new G4PVPlacement(piRotTiming_rear, G4ThreeVector(y+bar_length*0.5+gap_l + det_l*0.5, x, pos_Z_T2), detLV, Form("timingDet_rear_2_PV_%d", iBar), worldLV, false, 0, checkOverlaps) ;
+
+  }
+
+
+   //SURFACE STATE IMPLEMENTATION
+/*
    //front face surface state (opposite to photodetector)
    G4Box* Front_skin 			= new G4Box("Front_skin", core_radius_x, core_radius_y, 0.5*depth);
    G4LogicalVolume* Front_skin_log 	= new G4LogicalVolume(Front_skin, MyMaterials::Air(), "Front_skin_log", 0, 0, 0);
-//   G4VPhysicalVolume* Front_skin_phys 	= new G4PVPlacement(0, G4ThreeVector(0., 0., -(0.5*fibre_length+0.5*depth)) , Front_skin_log, "Front_skin_phys", worldLV, false, 0);
+//   G4VPhysicalVolume* Front_skin_phys 	= new G4PVPlacement(0, G4ThreeVector(0., 0., -(0.5*bar_length+0.5*depth)) , Front_skin_log, "Front_skin_phys", worldLV, false, 0);
 
    //side surface state
-   G4VSolid* dummySk = new G4Box ("dummySk", core_radius_x+depth, core_radius_y+depth, 0.5*fibre_length) ;
-   G4VSolid* subSk   = new G4Box ("subSk", core_radius_x, core_radius_y, 0.51*fibre_length);
+   G4VSolid* dummySk = new G4Box ("dummySk", core_radius_x+depth, core_radius_y+depth, 0.5*bar_length) ;
+   G4VSolid* subSk   = new G4Box ("subSk", core_radius_x, core_radius_y, 0.51*bar_length);
    
    G4SubtractionSolid* Side_skin 	= new G4SubtractionSolid("Side_skin", dummySk, subSk);				
    G4LogicalVolume* Side_skin_log 	= new G4LogicalVolume(Side_skin, MyMaterials::Air(), "Side_skin_log", 0, 0, 0);
@@ -348,7 +344,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
    OpCrystalSurface->SetType(dielectric_dielectric);
    OpCrystalSurface->SetModel(unified);
 
-
+*/
 
 
   //********************************************
@@ -362,19 +358,18 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
   //double pointingAngle = 0.001976598*M_PI;	//~0.36° -- arctan (29.31/4720)
   double pointingAngle = 0.;	//~0.36° -- arctan (29.31/4720)
   double alveola_thickness = 0.2*mm;
-  float total_ecal_length = ecal_front_length + ecal_rear_length;
+//  float total_ecal_length = ecal_front_length + ecal_rear_length;
   
   // ECAL solid
   G4Trd* ecalCrystalS_f = new G4Trd("ecalCrystalS_f",0.5*ecal_front_face, 0.5*ecal_rear_face, 0.5*ecal_front_face , 0.5*ecal_rear_face, 0.5*ecal_front_length);
   G4Trd* ecalCrystalS_r = new G4Trd("ecalCrystalS_r",0.5*ecal_front_face, 0.5*ecal_rear_face, 0.5*ecal_front_face , 0.5*ecal_rear_face, 0.5*ecal_rear_length);
 //  G4Trd* ecalCrystalS_big = new G4Trd("ecalCrystalS_big",0.5*(ecal_front_face + alveola_thickness/2), 0.5*(ecal_rear_face + alveola_thickness/2), 0.5*(ecal_front_length + alveola_thickness/2) , 0.5*(ecal_rear_face+ alveola_thickness/2), 0.5*(total_ecal_length - 0.1*mm));
- // G4SubtractionSolid* ecalAlveolaS = new G4SubtractionSolid ("ecalAlveolaS", ecalCrystalS_big, ecalCrystalS);
-  
-  G4Box* ecalGapLayerS = new G4Box("ecalGapLayerS", ecal_det_size, ecal_det_size, 0.5*depth );
-  G4Box* ecalGapS      = new G4Box("ecalGapS",      ecal_det_size, ecal_det_size, 0.5*(gap_l-depth) );
- 
-  G4Box* ecalDetLayerS = new G4Box("ecalDetLayerS", ecal_det_size, ecal_det_size, 0.5*depth);
-  G4Box* ecalDetS      = new G4Box("ecalDetS",      ecal_det_size, ecal_det_size, 0.5*(det_l-depth));
+// G4SubtractionSolid* ecalAlveolaS = new G4SubtractionSolid ("ecalAlveolaS", ecalCrystalS_big, ecalCrystalS);
+
+//  G4Box* ecalGapLayerS = new G4Box("ecalGapLayerS", ecal_det_size*0.5, ecal_det_size*0.5, 0.5*depth );
+  G4Box* ecalGapS      = new G4Box("ecalGapS",      ecal_det_size*0.5, ecal_det_size*0.5, 0.5*(gap_l-depth) );
+//  G4Box* ecalDetLayerS = new G4Box("ecalDetLayerS", ecal_det_size*0.5, ecal_det_size*0.5, 0.5*depth);
+  G4Box* ecalDetS      = new G4Box("ecalDetS",      ecal_det_size*0.5, ecal_det_size*0.5, 0.5*(det_l-depth));
   
   
   // ECAL logic
@@ -382,38 +377,42 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
   G4LogicalVolume* ecalCrystalL_r = new G4LogicalVolume(ecalCrystalS_r, EcalMaterial, "ecalCrystalL_r", 0, 0, 0);
 //  G4LogicalVolume* ecalAlveolaL = new G4LogicalVolume(ecalAlveolaS, MyMaterials::Air(), "ecalAlveolaL", 0, 0, 0);
   
-  G4LogicalVolume* ecalGapLayerL = new G4LogicalVolume(ecalGapLayerS, GaMaterial, "ecalGapLayerL", 0, 0, 0);
+//  G4LogicalVolume* ecalGapLayerL = new G4LogicalVolume(ecalGapLayerS, GaMaterial, "ecalGapLayerL", 0, 0, 0);
   G4LogicalVolume* ecalGapL	 = new G4LogicalVolume(ecalGapS, GaMaterial, "ecalGapL", 0, 0, 0);
-  
-  G4LogicalVolume* ecalDetLayerL = new G4LogicalVolume(ecalDetLayerS, DeMaterial, "ecalDetLayerL", 0, 0, 0);
+//  G4LogicalVolume* ecalDetLayerL = new G4LogicalVolume(ecalDetLayerS, DeMaterial, "ecalDetLayerL", 0, 0, 0);
   G4LogicalVolume* ecalDetL      = new G4LogicalVolume(ecalDetS, DeMaterial, "ecalDetL", 0, 0, 0);
 
   
-  // ECAL physical placement
-  G4VPhysicalVolume* ecalCrystalP_f[25];
-  G4VPhysicalVolume* ecalCrystalP_r[25];
-  G4VPhysicalVolume* ecalAlveolaP[25];
 
-  G4VPhysicalVolume* ecalGapLayerP[25];
-  G4VPhysicalVolume* ecalGapP[25];
+  // ECAL physical placement
+  const int NECAL_CRYST = 100;
+  G4VPhysicalVolume* ecalCrystalP_f[NECAL_CRYST];
+  G4VPhysicalVolume* ecalCrystalP_r[NECAL_CRYST];
+//  G4VPhysicalVolume* ecalAlveolaP[121];
+
+//  G4VPhysicalVolume* ecalGapLayerP[121];
+  G4VPhysicalVolume* ecalGapP_f[NECAL_CRYST];
+  G4VPhysicalVolume* ecalGapP_r[NECAL_CRYST];
   
-  G4VPhysicalVolume* ecalDetLayerP[25];
-  G4VPhysicalVolume* ecalDetP[25];
+  //G4VPhysicalVolume* ecalDetLayerP[121];
+  G4VPhysicalVolume* ecalDetP_f[NECAL_CRYST];
+  G4VPhysicalVolume* ecalDetP_r[NECAL_CRYST];
   
   char name[60];
 
-  G4double x_pos[25];
-  G4double y_pos[25];
+  G4double x_pos[NECAL_CRYST];
+  G4double y_pos[NECAL_CRYST];
+  int nArrayECAL = (int) sqrt(NECAL_CRYST);
 
   int iCrystal;
-  for (int iX = 0; iX < 5; iX ++)
+  for (int iX = 0; iX < nArrayECAL; iX ++)
   {
-    for (int iY = 0; iY < 5; iY ++)
+    for (int iY = 0; iY < nArrayECAL; iY ++)
     {
       
-      iCrystal = 5*iX + iY;
-      x_pos[iCrystal] = iX*(ecal_rear_face+ecal_front_face + 2*alveola_thickness)/2. - ecal_front_face*2.5 + ecal_front_face/2;	// position the baricenter of crystals and then rotating them by
-      y_pos[iCrystal] = iY*(ecal_rear_face+ecal_front_face + 2*alveola_thickness)/2. - ecal_front_face*2.5 + ecal_front_face/2;
+      iCrystal = nArrayECAL*iX + iY;
+      x_pos[iCrystal] = (iX-nArrayECAL/2)*(ecal_front_face + alveola_thickness);	// position the baricenter of crystals and then rotating them by
+      y_pos[iCrystal] =( iY-nArrayECAL/2)*(ecal_front_face + alveola_thickness);
       
       G4RotationMatrix* piRotEcal = new G4RotationMatrix;
       piRotEcal->rotateY(-pointingAngle*rad*(iX + 0.5));
@@ -426,21 +425,28 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
 
       sprintf(name, "ecalCrystalP_r_%d", iCrystal);
       ecalCrystalP_r[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], ecal_timing_distance + ecal_front_length + ecal_rear_length*0.5), ecalCrystalL_r, name, worldLV, false, 0);
-  /*    
+
+      sprintf(name, "ecalGapP_f_%d", iCrystal);
+      ecalGapP_f[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], ecal_timing_distance - gap_l*0.5), ecalGapL, name, worldLV, false, 0);
+
+      sprintf(name, "ecalGapP_r_%d", iCrystal);
+      ecalGapP_r[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], ecal_timing_distance + ecal_front_length + ecal_rear_length + gap_l*0.5), ecalGapL, name, worldLV, false, 0);
+
+      sprintf(name, "ecalDetP_f_%d", iCrystal);
+      ecalDetP_f[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], ecal_timing_distance  - gap_l - det_l*0.5), ecalDetL, name, worldLV, false, 0);
+
+      sprintf(name, "ecalDetP_r_%d", iCrystal);
+      ecalDetP_r[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], ecal_timing_distance + ecal_front_length + ecal_rear_length + gap_l + det_l*0.5), ecalDetL, name, worldLV, false, 0);
+
+/*    
       sprintf(name, "ecalAlveolaP_%d", iCrystal);
       ecalAlveolaP[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], ecal_timing_distance), ecalAlveolaL, name, worldLV, false, 0);
 
       sprintf(name,"ecalGapLayerP_%d",iCrystal);
       ecalGapLayerP[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos_pmt[iCrystal], y_pos_pmt[iCrystal], (total_ecal_length + gap_l + ecal_timing_distance)/2), ecalGapLayerL, name, worldLV, false, 0);
-      
-      sprintf(name,"ecalGapP_%d",iCrystal);
-      ecalGapP[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos_pmt[iCrystal], y_pos_pmt[iCrystal], (total_ecal_length + win_l)*0.5 + gap_l + ecal_timing_distance), ecalGapL, name, worldLV, false, 0);
 
       sprintf(name,"ecalDetLayerP_%d", iCrystal);
       ecalDetLayerP[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos_pmt[iCrystal], y_pos_pmt[iCrystal], (total_ecal_length + depth)*0.5 + gap_l + det_l + ecal_timing_distance), ecalDetLayerL, name, worldLV, false, 0);
-
-      sprintf(name,"ecalDetP_%d", iCrystal);
-      ecalDetP[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos_pmt[iCrystal], y_pos_pmt[iCrystal], total_ecal_length*0.5 + gap_l + det_l + depth + ecal_timing_distance) , ecalDetL, name, worldLV, false, 0);
 */
     }
   }
@@ -485,8 +491,24 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
   float hLayer_gap = 10*mm;
   
   //HCAL 1 (front)
-  int NLAYERS_1 = 3;
-  int NTILES = 25;
+  const int NLAYERS_1 = 3;
+  const int NTILES = 25;
+
+  G4double x_pos_tile[625];
+  G4double y_pos_tile[625];
+
+  int iTile;
+  for (int iX = 0; iX < NTILES; iX ++)
+ {
+    for (int iY = 0; iY < NTILES; iY ++)
+   {
+       iTile = NTILES*iX + iY;
+       x_pos_tile[iTile] = iX*hcalTile_width - hcalTile_width*NTILES/2. + hcalTile_width*0.5;
+       y_pos_tile[iTile] = iY*hcalTile_width - hcalTile_width*NTILES/2. + hcalTile_width*0.5;
+       cout << " x_pos_tile [" <<iTile << "] = " << x_pos_tile[iTile] << " :: y_pos_tile[" << iTile << "] = " << y_pos_tile[iTile] << endl;
+    }
+ }
+
 
   if (hcal_width>0.1)
  {
@@ -497,25 +519,15 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
 
 		//passive layer of absorber
   		hcalAbs_t1_PV = new G4PVPlacement(0, G4ThreeVector(0, 0, z), hcalAbs_t1_LV, Form("hcalAbs_t1_%d", iLayer), worldLV, false, 0, checkOverlaps) ;
-
+		iTile = 0;
 		//active layer of scintillator
-		G4double x_pos[625];
-	  	G4double y_pos[625];
-
-		 int iTile;
 		 for (int iX = 0; iX < NTILES; iX ++)
 		{
 		    for (int iY = 0; iY < NTILES; iY ++)
 		   {
-      
-		      iTile = NTILES*iX + iY;
-		      x_pos[iTile] = iX*hcalTile_width - hcalTile_width*NTILES/2. + hcalTile_width*0.5;
-		      y_pos[iTile] = iY*hcalTile_width - hcalTile_width*NTILES/2. + hcalTile_width*0.5;
-
-		      cout << " x_pos_tile [" <<iTile << "] = " << x_pos[iTile] << " :: y_pos_tile[" << iTile << "] = " << y_pos[iTile] << endl;
-      
+		       iTile = NTILES*iX + iY;
 		      sprintf(name, "hcalTile_layer_%d_tile_%d", iLayer, iTile);
-      	      	      hcalTilePV = new G4PVPlacement(0, G4ThreeVector(x_pos[iTile], y_pos[iTile], z + (hcalAbs_1_thick+hLayer_gap)*0.5 ), hcalTileLV, name, worldLV, false, 0);
+      	      	      hcalTilePV = new G4PVPlacement(0, G4ThreeVector(x_pos_tile[iTile], y_pos_tile[iTile], z + (hcalAbs_1_thick+hLayer_gap)*0.5 ), hcalTileLV, name, worldLV, false, 0);
 		   }
 		}
 	}
@@ -530,28 +542,22 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
 		//passive layer of solenoid
   		solenoidPV = new G4PVPlacement(0, G4ThreeVector(0, 0, z), solenoidLV, "solenoid_PV", worldLV, false, 0, checkOverlaps) ;
 		//active layer of scintillator
-		G4double x_pos[625];
-	  	G4double y_pos[625];
-		 int iTile;
-		 for (int iX = 0; iX < NTILES; iX ++)
+  		iTile = 0;
+		for (int iX = 0; iX < NTILES; iX ++)
 		{
 		    for (int iY = 0; iY < NTILES; iY ++)
-		   {
-      
+		   {      
 		      iTile = NTILES*iX + iY;
-		      x_pos[iTile] = iX*hcalTile_width - hcalTile_width*NTILES/2. + hcalTile_width*0.5;
-		      y_pos[iTile] = iY*hcalTile_width - hcalTile_width*NTILES/2. + hcalTile_width*0.5;      
 		      sprintf(name, "hcalTile_layer_%d_tile_%d", iLayer+NLAYERS_1, iTile);
-      	      	      hcalTilePV = new G4PVPlacement(0, G4ThreeVector(x_pos[iTile], y_pos[iTile], z + (solenoid_thick+hLayer_gap)*0.5 ), hcalTileLV, name, worldLV, false, 0);
+      	      	      hcalTilePV = new G4PVPlacement(0, G4ThreeVector(x_pos_tile[iTile], y_pos_tile[iTile], z + (solenoid_thick+hLayer_gap)*0.5 ), hcalTileLV, name, worldLV, false, 0);
 		   }
 		}
 	}
   }
 
 
-
   //HCAL 2 (rear)
-  int NLAYERS_2 = 11;
+  const int NLAYERS_2 = 11;
 
   if (hcal_width>0.1)
  {
@@ -564,23 +570,14 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
   		hcalAbs_t2_PV = new G4PVPlacement(0, G4ThreeVector(0, 0, z), hcalAbs_t2_LV, Form("hcalAbs_t2_%d", iLayer), worldLV, false, 0, checkOverlaps) ;
 
 		//active layer of scintillator
-		G4double x_pos[625];
-	  	G4double y_pos[625];
-
-		 int iTile;
+		 iTile = 0;
 		 for (int iX = 0; iX < NTILES; iX ++)
 		{
 		    for (int iY = 0; iY < NTILES; iY ++)
-		   {
-      
-		      iTile = NTILES*iX + iY;
-		      x_pos[iTile] = iX*hcalTile_width - hcalTile_width*NTILES/2. + hcalTile_width*0.5;
-		      y_pos[iTile] = iY*hcalTile_width - hcalTile_width*NTILES/2. + hcalTile_width*0.5;
-
-		      cout << " x_pos_tile [" <<iTile << "] = " << x_pos[iTile] << " :: y_pos_tile[" << iTile << "] = " << y_pos[iTile] << endl;
-      
+		   {      
+		      iTile = NTILES*iX + iY;      
 		      sprintf(name, "hcalTile_layer_%d_tile_%d", iLayer+1+NLAYERS_1, iTile);
-      	      	      hcalTilePV = new G4PVPlacement(0, G4ThreeVector(x_pos[iTile], y_pos[iTile], z + (hcalAbs_2_thick+hLayer_gap)*0.5 ), hcalTileLV, name, worldLV, false, 0);
+      	      	      hcalTilePV = new G4PVPlacement(0, G4ThreeVector(x_pos_tile[iTile], y_pos_tile[iTile], z + (hcalAbs_2_thick+hLayer_gap)*0.5 ), hcalTileLV, name, worldLV, false, 0);
 		   }
 		}
 	}
@@ -625,12 +622,12 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
   VisCrystalCore_r -> SetVisibility(true);
   VisCrystalCore_r -> SetForceWireframe(true);
   ecalCrystalL_r -> SetVisAttributes(VisCrystalCore_r);
-  
+  /*
   G4VisAttributes* VisAttGapLayer = new G4VisAttributes(gray);
   VisAttGapLayer -> SetVisibility(true);
   VisAttGapLayer -> SetForceWireframe(true);
   gapLayerLV -> SetVisAttributes(VisAttGapLayer);
-
+*/
   
   G4VisAttributes* VisAttGap = new G4VisAttributes(blue);
   VisAttGap -> SetVisibility(true);
@@ -649,20 +646,18 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
   G4VisAttributes* VisHCALAbs2 = new G4VisAttributes(red);
   VisHCALAbs2 -> SetVisibility(true);
   hcalAbs_t2_LV -> SetVisAttributes(VisHCALAbs2);
-  
-  
-  if( detector )
-  {
-    G4VisAttributes* VisAttDetLayer = new G4VisAttributes(red);
-    VisAttDetLayer -> SetVisibility(true);
-    VisAttDetLayer -> SetForceWireframe(false);
-    detLayerLV -> SetVisAttributes(VisAttDetLayer);
-    
+
+    G4VisAttributes* VisAttTracker = new G4VisAttributes(gray);
+    VisAttTracker -> SetVisibility(true);
+    VisAttTracker -> SetForceWireframe(true);
+    trackerLV -> SetVisAttributes(VisAttTracker);
+    servicesLV -> SetVisAttributes(VisAttTracker);
+
     G4VisAttributes* VisAttDet = new G4VisAttributes(gray);
     VisAttDet -> SetVisibility(true);
     VisAttDet -> SetForceWireframe(false);
     detLV -> SetVisAttributes(VisAttDet);
-  }
+ 
   
   if (B_field_intensity > 0.1 * tesla) ConstructField () ; 
   
@@ -703,7 +698,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
   // }
   
   
-  // fib = FiberInit(fibre_length,fibre_radius,CreateTree::Instance()->attLengths,rIndVecCore,rIndVecClad,rIndVecAir,rIndVecGap) ;
+  // fib = FiberInit(bar_length,fibre_radius,CreateTree::Instance()->attLengths,rIndVecCore,rIndVecClad,rIndVecAir,rIndVecGap) ;
   
   
   
@@ -721,7 +716,8 @@ void DetectorConstruction::initializeMaterials ()
   // define materials
   
   WoMaterial = NULL ;
-  if      ( world_material == 1 ) WoMaterial = MyMaterials::Air () ;
+  if      	( world_material == 0 ) WoMaterial = MyMaterials::Vacuum () ;
+  else if   ( world_material == 1 ) WoMaterial = MyMaterials::Air () ;
   else
   {
     G4cerr << "<DetectorConstructioninitializeMaterials>: Invalid fibre world material specifier " << world_material << G4endl ;
@@ -744,7 +740,6 @@ void DetectorConstruction::initializeMaterials ()
   else if ( core_material == 12 ) CoMaterial = MyMaterials::PbF2();
   else if ( core_material == 13 ) CoMaterial = MyMaterials::PlasticBC408();
   else if ( core_material == 14 ) CoMaterial = MyMaterials::PlasticBC418();
-  else if ( core_material == 15)  CoMaterial = MyMaterials::ToyLSO(toy_ly, toy_decay, toy_rise);
   else
   {
     G4cerr << "<DetectorConstructioninitializeMaterials>: Invalid fibre clad material specifier " << core_material << G4endl ;
@@ -767,7 +762,6 @@ void DetectorConstruction::initializeMaterials ()
   else if ( ecal_material == 12 ) EcalMaterial = MyMaterials::PlasticBC408();
   else if ( ecal_material == 13 ) EcalMaterial = MyMaterials::PlasticBC418();
   else if ( ecal_material == 14 ) EcalMaterial = MyMaterials::PWO();
-  else if ( ecal_material == 15)  EcalMaterial = MyMaterials::ToyLSO(toy_ly, toy_decay, toy_rise);
   else
   {
     G4cerr << "<DetectorConstructioninitializeMaterials>: Invalid fibre clad material specifier " << ecal_material << G4endl ;
