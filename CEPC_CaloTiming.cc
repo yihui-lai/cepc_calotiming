@@ -149,7 +149,7 @@ int main(int argc,char** argv)
   G4int printModulo 		= config.read<int> ("printModulo");
   G4int switchOnScintillation 	= config.read<int> ("switchOnScintillation");
   G4int switchOnCerenkov 	= config.read<int> ("switchOnCerenkov");
-  G4int propagateScintillation 	= config.read<int> ("propagateScintillation");
+  G4int propagateScintillation = config.read<int> ("propagateScintillation");
   G4int propagateCerenkov 	= config.read<int> ("propagateCerenkov");
   
   G4cout << "before run manager" << G4endl;
@@ -206,10 +206,10 @@ int main(int argc,char** argv)
   G4cout << ">>> Define DetectorConstruction::end <<<" << G4endl; 
   
   G4cout << ">>> Define PrimaryGeneratorAction::begin <<<" << G4endl; 
-  G4double fibre_length = config.read<double> ("fibre_length");
+//  G4double bar_length = config.read<double> ("bar_length");
 //  G4double source_dist = config.read<double> ("source_dist");
-  G4double abs_thick = config.read<double> ("abs_thick");
-//  G4double z_0 = -0.5 * (fibre_length+abs_thick) - 3*mm - source_dist;
+//  G4double abs_thick = config.read<double> ("abs_thick");
+//  G4double z_0 = -0.5 * (bar_length+abs_thick) - 3*mm - source_dist;
 //  G4VUserPrimaryGeneratorAction* gen_action = new PrimaryGeneratorAction(z_0);
   G4VUserPrimaryGeneratorAction* gen_action = new PrimaryGeneratorAction(0);
   runManager->SetUserAction(gen_action);
