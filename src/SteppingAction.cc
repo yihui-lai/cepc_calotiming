@@ -80,12 +80,13 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
  
   G4Track* theTrack = theStep->GetTrack () ;
   
-  const G4ThreeVector& theTrackDirection = theTrack->GetMomentumDirection();
-  const G4ThreeVector& theTrackVertexDirection = theTrack->GetVertexMomentumDirection();
-  
-  G4int trackID = theTrack->GetTrackID();
-  TrackInformation* theTrackInfo = (TrackInformation*)(theTrack->GetUserInformation());
+//  const G4ThreeVector& theTrackDirection = theTrack->GetMomentumDirection();
+//  const G4ThreeVector& theTrackVertexDirection = theTrack->GetVertexMomentumDirection();
+
+//  TrackInformation* theTrackInfo = (TrackInformation*)(theTrack->GetUserInformation());
+
   G4ParticleDefinition* particleType = theTrack->GetDefinition () ;
+  //G4int trackID = theTrack->GetTrackID();
   
   G4StepPoint * thePrePoint  = theStep->GetPreStepPoint () ;
   G4StepPoint * thePostPoint = theStep->GetPostStepPoint () ;
@@ -94,7 +95,8 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
   G4VPhysicalVolume * thePostPV = thePostPoint->GetPhysicalVolume () ;
   G4String thePrePVName  = "" ; if ( thePrePV )  thePrePVName  = thePrePV  -> GetName () ;
   G4String thePostPVName = "" ; if ( thePostPV ) thePostPVName = thePostPV -> GetName () ;
-  G4VSolid* thePreS = thePrePV->GetLogicalVolume()->GetSolid();
+
+//  G4VSolid* thePreS = thePrePV->GetLogicalVolume()->GetSolid();
     
   G4int nStep = theTrack -> GetCurrentStepNumber();
   
@@ -111,11 +113,13 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
 
   if( particleType == G4OpticalPhoton::OpticalPhotonDefinition() )
   {
-  /*
+  
     G4String processName = theTrack->GetCreatorProcess()->GetProcessName();
-        
+
     //----------------------------
     // count photons at production
+     /*
+    //scintillation photons	
     if( ( theTrack->GetLogicalVolumeAtVertex()->GetName().contains("core") ) &&
         (nStep == 1) && (processName == "Scintillation") )
     {
@@ -132,33 +136,64 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
 	CreateTree::Instance()->h_phot_sci_angleAtProduction -> Fill( G4ThreeVector(0.,0.,1.).angle(theTrackVertexDirection) *57.2958);
         CreateTree::Instance()->h_phot_sci_lambda -> Fill( MyMaterials::fromEvToNm(theTrack->GetTotalEnergy()/eV) );
       }
+
            
       if( !propagateScintillation ) theTrack->SetTrackStatus(fKillTrackAndSecondaries);      
 
     }
-    
+    */
         
-    if( ( theTrack->GetLogicalVolumeAtVertex()->GetName().contains("core")) &&
+    if(// ( theTrack->GetLogicalVolumeAtVertex()->GetName().contains("core")) &&
         (nStep == 1) && (processName == "Cerenkov") )
     {
-      //kill very long wavelengths
-      if (MyMaterials::fromEvToNm(theTrack->GetTotalEnergy()/eV) > 1200)  theTrack->SetTrackStatus(fKillTrackAndSecondaries); 
-      else if (thePrePVName == "corePV" && MyMaterials::fromEvToNm(theTrack->GetTotalEnergy()/eV) < 1200)
-      {      
-	CreateTree::Instance()->tot_phot_cer += 1;
-        CreateTree::Instance()->h_phot_cer_time   -> Fill( thePrePoint->GetGlobalTime()/picosecond );
-        CreateTree::Instance()->h_phot_cer_angleAtProduction -> Fill( G4ThreeVector(0.,0.,1.).angle(theTrackVertexDirection)*57.2958 );
-        CreateTree::Instance()->h_phot_cer_lambda -> Fill( MyMaterials::fromEvToNm(theTrack->GetTotalEnergy()/eV) );
 
+
+//      std::cout << " generated Cerenkov photon" << std::endl;
+      float photWL = MyMaterials::fromEvToNm(theTrack->GetTotalEnergy()/eV);
+
+      //kill very long wavelengths
+      if (photWL> 1000 ||  photWL< 300)  theTrack->SetTrackStatus(fKillTrackAndSecondaries); 
+
+
+
+      else if (thePrePVName.contains("corePV_front"))
+      {      
+	CreateTree::Instance()->tot_phot_cer_Timing_f += 1;
+        CreateTree::Instance()->h_phot_cer_lambda_Timing_f -> Fill( photWL );
+
+//        CreateTree::Instance()->h_phot_cer_time   -> Fill( thePrePoint->GetGlobalTime()/picosecond );
+//        CreateTree::Instance()->h_phot_cer_angleAtProduction -> Fill( G4ThreeVector(0.,0.,1.).angle(theTrackVertexDirection)*57.2958 );
 //	CreateTree::Instance()->time_prod_cher.push_back(thePrePoint->GetGlobalTime()/picosecond );
 //	CreateTree::Instance()->lambda_prod_cher.push_back(MyMaterials::fromEvToNm(theTrack->GetTotalEnergy()/eV));
       }
+      else if (thePrePVName.contains("corePV_rear"))
+      {      
+	CreateTree::Instance()->tot_phot_cer_Timing_r += 1;
+        CreateTree::Instance()->h_phot_cer_lambda_Timing_r -> Fill( photWL );
+      }
+
+      else if (thePrePVName.contains("ecalCrystalP_f"))
+      {      
+	CreateTree::Instance()->tot_phot_cer_ECAL_f += 1;
+        CreateTree::Instance()->h_phot_cer_lambda_ECAL_f -> Fill( photWL);
+      }
+      else if (thePrePVName.contains("ecalCrystalP_r"))
+      {      
+	CreateTree::Instance()->tot_phot_cer_ECAL_r += 1;
+        CreateTree::Instance()->h_phot_cer_lambda_ECAL_r -> Fill( photWL );
+      }
+      else if (thePrePVName.contains("hcalTile_layer"))
+      {      
+	CreateTree::Instance()->tot_phot_cer_HCAL += 1;
+        CreateTree::Instance()->h_phot_cer_lambda_HCAL -> Fill( photWL );
+      }
+
 
       if( !propagateCerenkov ) theTrack->SetTrackStatus(fKillTrackAndSecondaries);      
 
     }
     
-    
+    /*
     //----------------------------
     // count photons at fiber exit
     
@@ -286,7 +321,9 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
         }
       }
     }
-  */  
+
+*/
+   
   } // optical photon
   
   
@@ -296,13 +333,82 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
     //G4cout << ">>> begin non optical photon" << G4endl;
     
     G4double energy = theStep->GetTotalEnergyDeposit() - theStep->GetNonIonizingEnergyDeposit();
-    if ( energy == 0. ) return;
-    
+//    if ( energy == 0. ) return;
+
     CreateTree::Instance() -> depositedEnergyTotal += energy/GeV;
-    
-    if( thePrePVName.contains("absorber") )
+
+
+   //count tracks before SCEPCAL at the tracker layers
+    if (  thePrePVName.contains("world") && thePostPVName.contains("trackerPV_Layer")    )	// interface between T1 and T2
+   {
+        for (int iLayer = 0; iLayer<6; iLayer++)
+	{
+		if (thePostPVName == Form("trackerPV_Layer%d", iLayer)    )	// interface between T1 and T2
+	        CreateTree::Instance() -> nTracksTRK[iLayer] ++;   //counting tracks crossing the boundary
+	}
+   }
+
+
+    //save primary particle position and momentum before timing layer T1 and before ECAL E1
+    else if ( thePrePVName.contains("world") && thePostPVName.contains("corePV_front")  ) // interface between world and T1
+   {
+ 
+        CreateTree::Instance() -> nTracksT1 ++;   //counting tracks crossing the boundary
+
+	if ( theTrack->GetParentID() == 0 )	// select only the primary particle
+	{
+	        CreateTree::Instance() -> primaryPosT1->at(0) = global_x;
+	        CreateTree::Instance() -> primaryPosT1->at(1) = global_y;
+	        CreateTree::Instance() -> primaryPosT1->at(2) = global_z;
+
+	        CreateTree::Instance() -> primaryMomT1->at(0) = thePrePoint->GetMomentum().x()/GeV;
+        	CreateTree::Instance() -> primaryMomT1->at(1) = thePrePoint->GetMomentum().y()/GeV;
+	        CreateTree::Instance() -> primaryMomT1->at(2) = thePrePoint->GetMomentum().z()/GeV;
+	        CreateTree::Instance() -> primaryMomT1->at(3) = thePrePoint->GetTotalEnergy()/GeV;
+	}
+   }
+
+    else if (  thePrePVName.contains("world") && thePostPVName.contains("corePV_rear")    )	// interface between T1 and T2
+   {
+        CreateTree::Instance() -> nTracksT2 ++;   //counting tracks crossing the boundary
+   }
+
+
+    else if ( 	( thePrePVName.contains("world")  || thePrePVName.contains("ecalGapP_f") || thePrePVName.contains("ecalDetP_f") ) 
+		&& thePostPVName.contains("ecalCrystalP_f") 	// interface between world and E1
+       )
+   {
+        CreateTree::Instance() -> nTracksE1 ++;   //counting tracks crossing the boundary
+
+	if ( theTrack->GetParentID() == 0 )	// select only the primary particle
+	{
+	        CreateTree::Instance() -> primaryPosE1->at(0) = global_x;
+	        CreateTree::Instance() -> primaryPosE1->at(1) = global_y;
+	        CreateTree::Instance() -> primaryPosE1->at(2) = global_z;
+
+	        CreateTree::Instance() -> primaryMomE1->at(0) = thePrePoint->GetMomentum().x()/GeV;
+        	CreateTree::Instance() -> primaryMomE1->at(1) = thePrePoint->GetMomentum().y()/GeV;
+	        CreateTree::Instance() -> primaryMomE1->at(2) = thePrePoint->GetMomentum().z()/GeV;
+	        CreateTree::Instance() -> primaryMomE1->at(3) = thePrePoint->GetTotalEnergy()/GeV;
+	}
+   }
+
+    else if ( 	( thePrePVName.contains("ecalCrystalP_f") || thePrePVName.contains("world") )
+		&& thePostPVName.contains("ecalCrystalP_r"  )	
+       )// interface between E1 and E2
+   {
+        CreateTree::Instance() -> nTracksE2 ++;   //counting tracks crossing the boundary
+   }
+
+
+
+    //tracker
+    if( thePrePVName.contains("trackerPV_Layer") )
     {
-      CreateTree::Instance()->depositedEnergyAbsorber += energy/GeV;
+      for (int iLayer = 0; iLayer<6; iLayer++)
+      {
+	if (thePrePVName == Form("trackerPV_Layer%d", iLayer)) CreateTree::Instance()->Edep_Tracker_layer[iLayer] += energy/GeV;
+      }
     }
 
     //timing
@@ -327,7 +433,7 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
     if( thePrePVName.contains("ecalCrystalP_f") )
     {
       CreateTree::Instance()->depositedEnergyECAL_f += energy/GeV;
-      for (int iCh = 0; iCh<25; iCh++)
+      for (int iCh = 0; iCh<100; iCh++)
       {
 	if (thePrePVName == Form("ecalCrystalP_f_%d", iCh)) CreateTree::Instance()->Edep_ECAL_f_ch[iCh] += energy/GeV;
       }
@@ -335,11 +441,22 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
     if( thePrePVName.contains("ecalCrystalP_r") )
     {
       CreateTree::Instance()->depositedEnergyECAL_r += energy/GeV;
-      for (int iCh = 0; iCh<25; iCh++)
+      for (int iCh = 0; iCh<100; iCh++)
       {
 	if (thePrePVName == Form("ecalCrystalP_r_%d", iCh)) CreateTree::Instance()->Edep_ECAL_r_ch[iCh] += energy/GeV;
       }
     }    
+
+
+    //hcal
+    if( thePrePVName.contains("hcalTile_layer") )
+    {
+       CreateTree::Instance()->depositedEnergyHCAL += energy/GeV;
+//      for (int iLayer = 0; iLayer<100; iLayer++)
+  //    {
+//	if (thePrePVName == Form("ecalCrystalP_f_%d", iCh)) CreateTree::Instance()->Edep_ECAL_f_ch[iLayer] += energy/GeV;
+//      }
+    }
 
 
     if( thePrePVName.contains("world") )
