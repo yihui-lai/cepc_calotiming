@@ -90,7 +90,7 @@
 /gps/particle geantino
 /gps/pos/type Plane
 /gps/pos/shape Square
-/gps/pos/centre 0 0 -1500 mm
+/gps/pos/centre 0 0 -1900 mm
 /gps/direction 0 0 1
 #/gps/pos/halfx 3 mm
 #/gps/pos/halfy 15 mm
