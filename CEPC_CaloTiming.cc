@@ -90,7 +90,6 @@ long int CreateSeed();
 
 int main(int argc,char** argv)
 {
-  
   //  gInterpreter -> GenerateDictionary("vector<float>","vector");
   
   if (argc != 3 && argc != 2)
@@ -103,7 +102,8 @@ int main(int argc,char** argv)
   string file;
   string filename;
   TFile* outfile = NULL;
-  
+
+
   if(argc == 3) 
   {
     cout << "Starting exec mode..." << endl; 
@@ -248,17 +248,23 @@ int main(int argc,char** argv)
   {   
     // Initialize G4 kernel
     //
+
     runManager -> Initialize();
-    
+    std::cout<<"a"<<endl;    
+
     #ifdef G4VIS_USE
+
     G4VisManager* visManager = new G4VisExecutive;
     visManager -> Initialize();
+
     #endif
     
     G4UImanager* UImanager = G4UImanager::GetUIpointer(); 
+
     #ifdef G4UI_USE
-    G4UIExecutive * ui = new G4UIExecutive(argc,argv);
+    G4UIExecutive * ui = new G4UIExecutive(argc,argv,"Xm");
     #ifdef G4VIS_USE
+
     UImanager -> ApplyCommand("/control/execute "+gps_instructions_file);     
     cout << "ok finqui ... " << endl;
     #endif
