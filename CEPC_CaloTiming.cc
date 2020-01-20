@@ -91,19 +91,18 @@ long int CreateSeed();
 int main(int argc,char** argv)
 {
   //  gInterpreter -> GenerateDictionary("vector<float>","vector");
-  
+
+  string file;
+  string filename;
+  TFile* outfile = NULL;
+  bool DDD=0;
+  /*  
   if (argc != 3 && argc != 2)
   {
     cout << "Syntax for exec: crystal <configuration file> <output file>" << endl; 
     cout << "Syntax for viz:  crystal <configuration file>" << endl; 
     return 0;
   }
-  
-  string file;
-  string filename;
-  TFile* outfile = NULL;
-
-
   if(argc == 3) 
   {
     cout << "Starting exec mode..." << endl; 
@@ -114,16 +113,34 @@ int main(int argc,char** argv)
     outfile = new TFile((TString)filename,"RECREATE");
     outfile -> cd();
   }
-  
-  if (argc == 2)
+    if (argc == 2)
   {
     cout<<"Starting viz mode..."<<endl; 
   }
-  
+  */
+
+
+  G4String macro;
+  G4String session;
+  G4String dconfig;
+  for ( G4int i=1; i<argc; i=i+2 ) {
+    if      ( G4String(argv[i]) == "-m" ) macro = argv[i+1];
+    else if ( G4String(argv[i]) == "-u" ) {session = argv[i+1];DDD=1;}
+    else if ( G4String(argv[i]) == "-c" ) dconfig = argv[i+1];
+    else {
+      cout<<"bad arguments"<<endl;
+      return 1;
+    }
+  }
+
+
+
   cout<<"=====>   C O N F I G U R A T I O N   <====\n"<<endl;
   
-  G4cout << "Configuration file: '" << argv[1] << "'" << G4endl;
-  ConfigFile config(argv[1]);
+  //  G4cout << "Configuration file: '" << argv[1] << "'" << G4endl;
+  //ConfigFile config(argv[1]);
+  G4cout << "Configuration file: '" << dconfig << "'" << G4endl;
+  ConfigFile config(dconfig);
   
   
   // Seed the random number generator manually
@@ -201,7 +218,7 @@ int main(int argc,char** argv)
   G4cout << ">>> Define physics list::end <<<" << G4endl; 
   
   G4cout << ">>> Define DetectorConstruction::begin <<<" << G4endl; 
-  DetectorConstruction* detector = new DetectorConstruction(argv[1]);
+  DetectorConstruction* detector = new DetectorConstruction(dconfig);
   runManager-> SetUserInitialization(detector);
   G4cout << ">>> Define DetectorConstruction::end <<<" << G4endl; 
   
@@ -244,7 +261,7 @@ int main(int argc,char** argv)
   string gps_instructions_file = "" ;
   
   
-  if (argc == 2)   // Define UI session for interactive mode
+  if (DDD)   // Define UI session for interactive mode
   {   
     // Initialize G4 kernel
     //
@@ -262,7 +279,7 @@ int main(int argc,char** argv)
     G4UImanager* UImanager = G4UImanager::GetUIpointer(); 
 
     #ifdef G4UI_USE
-    G4UIExecutive * ui = new G4UIExecutive(argc,argv,"Xm");
+    G4UIExecutive * ui = new G4UIExecutive(argc,argv,session);
     #ifdef G4VIS_USE
 
     UImanager -> ApplyCommand("/control/execute "+gps_instructions_file);     

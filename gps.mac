@@ -1,6 +1,6 @@
 
 
-/gps/open OGL 600x600-0+0
+
 
 # Macro file for the
 # initialization of G4GeneralParticleSource
@@ -51,4 +51,4 @@
 #/gps/ang/type iso
 
 #/tracking/verbose 1
-/run/beamOn 5
+/run/beamOn 1
