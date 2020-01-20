@@ -39,6 +39,7 @@ endif()
 #
 include(${Geant4_USE_FILE})
 include_directories(${PROJECT_SOURCE_DIR}/include)
+include_directories(${ROOTSYS}/include)
 if(useROOT)
         if(myROOTclass)
                 EXECUTE_PROCESS(COMMAND rootcint -f dict.cc -c ${PROJECT_SOURCE_DIR}/include/${myROOTclass} ${PROJECT_SOURCE_DIR}/include/LinkDef.h)
