@@ -50,7 +50,7 @@
 #include "TString.h"
 #include "TTree.h"
 #include "TRandom3.h"
-#include "TCint.h"
+//#include "TCint.h"
 
 #include "G4RunManager.hh"
 #include "G4UImanager.hh"
@@ -91,7 +91,7 @@ long int CreateSeed();
 int main(int argc,char** argv)
 {
   
-  gInterpreter -> GenerateDictionary("vector<float>","vector");
+  //  gInterpreter -> GenerateDictionary("vector<float>","vector");
   
   if (argc != 3 && argc != 2)
   {
@@ -275,7 +275,7 @@ int main(int argc,char** argv)
     runManager -> Initialize();
     G4UImanager* UImanager = G4UImanager::GetUIpointer(); 
     config.readInto (gps_instructions_file, "gps_instructions_file") ;
-    UImanager -> ApplyCommand("/control/execute /afs/cern.ch/work/m/mlucchin/CEPC_CaloTiming/" + gps_instructions_file);
+    UImanager -> ApplyCommand("/control/execute " + gps_instructions_file);
   } 
   
   

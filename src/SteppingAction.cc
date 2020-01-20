@@ -3,7 +3,7 @@
 #include "DetectorConstruction.hh"
 #include "TString.h"
 #include "TRandom3.h"
-#include "TCint.h"
+//#include "TCint.h"
 #include "G4Step.hh"
 #include "G4Track.hh"
 #include "G4SteppingManager.hh"
