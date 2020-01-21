@@ -1,0 +1,2 @@
+
+./CEPC_CaloTiming -c template.cfg -u Xm  (-m run.mac if batch mode) -o filename
