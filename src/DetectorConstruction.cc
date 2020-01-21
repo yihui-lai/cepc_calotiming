@@ -385,7 +385,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
   
 
   // ECAL physical placement
-  const int NECAL_CRYST = 100;
+  const int NECAL_CRYST = 2500;
   G4VPhysicalVolume* ecalCrystalP_f[NECAL_CRYST];
   G4VPhysicalVolume* ecalCrystalP_r[NECAL_CRYST];
 //  G4VPhysicalVolume* ecalAlveolaP[121];
