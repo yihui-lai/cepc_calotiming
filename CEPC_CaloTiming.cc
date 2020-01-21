@@ -1,5 +1,4 @@
-//
-// ********************************************************************
+/// ********************************************************************
 // * License and Disclaimer                                           *
 // *                                                                  *
 // * The  Geant4 software  is  copyright of the Copyright Holders  of *
@@ -96,6 +95,7 @@ int main(int argc,char** argv)
   string filename;
   TFile* outfile = NULL;
   bool DDD=0;
+  bool BOOO=0;
   /*  
   if (argc != 3 && argc != 2)
   {
@@ -127,6 +127,14 @@ int main(int argc,char** argv)
     if      ( G4String(argv[i]) == "-m" ) macro = argv[i+1];
     else if ( G4String(argv[i]) == "-u" ) {session = argv[i+1];DDD=1;}
     else if ( G4String(argv[i]) == "-c" ) dconfig = argv[i+1];
+    else if ( G4String(argv[i]) == "-o" ) {
+      BOOO=1;
+      file = argv[i+1];
+      filename = file + ".root";
+      G4cout << "Writing data to file '" << filename << "' ..." << G4endl;
+          outfile = new TFile((TString)filename,"RECREATE");
+      outfile -> cd();
+         }
     else {
       cout<<"bad arguments"<<endl;
       return 1;
@@ -303,8 +311,8 @@ int main(int argc,char** argv)
   {
     runManager -> Initialize();
     G4UImanager* UImanager = G4UImanager::GetUIpointer(); 
-    config.readInto (gps_instructions_file, "gps_instructions_file") ;
-    UImanager -> ApplyCommand("/control/execute " + gps_instructions_file);
+    config.readInto (gps_instructions_file, macro) ;
+    UImanager -> ApplyCommand("/control/execute " + macro);
   } 
   
   
@@ -317,7 +325,7 @@ int main(int argc,char** argv)
   delete runManager;
   delete verbosity;
   
-  if(argc == 3) 
+  if(BOOO) 
   {
     G4cout << "Writing tree to file " << filename << " ..." << G4endl;
     mytree->Write (outfile) ;
