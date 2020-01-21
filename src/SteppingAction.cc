@@ -337,6 +337,13 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
 
     CreateTree::Instance() -> depositedEnergyTotal += energy/GeV;
 
+    if(volume==fDetConstruction->GetWorldPV) {
+      G4ThreeVector haha = (step->GetPreStepPoint())->GetPosition();
+      G4ThreeVector haha2 = (step->GetPostStepPoint())->GetPosition();
+      bool haha4=((step->GetPostStepPoint())->GetStepStatus())==fWorldBoundary;
+      if(haha4) CreateTree::Instance() -> depositedEnergyEscapeWorld += energy/GeV;
+    }
+
 
    //count tracks before SCEPCAL at the tracker layers
     if (  thePrePVName.contains("world") && thePostPVName.contains("trackerPV_Layer")    )	// interface between T1 and T2

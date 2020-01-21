@@ -63,6 +63,7 @@ public:
 
   //integrated energy in each longitudinal layer
   float depositedEnergyTotal;
+  float depositedEnergyEscapeWorld;
 
   float depositedEnergyTiming_f;
   float depositedEnergyTiming_r;

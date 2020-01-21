@@ -56,6 +56,7 @@ CreateTree::CreateTree (TString name)
 
   //integrated per longitudinal layer 
   this -> GetTree() -> Branch("depositedEnergyTotal",     	&this->depositedEnergyTotal,        	"depositedEnergyTotal/F");
+  this -> GetTree() -> Branch("depositedEnergyEscapeWorld",     	&this->depositedEnergyEscapeWorld,        	"depositedEnergyEscapeWorld/F");
 
   this -> GetTree() -> Branch("depositedEnergyTiming_f",  &this->depositedEnergyTiming_f,         "depositedEnergyTiming_f/F");
   this -> GetTree() -> Branch("depositedEnergyTiming_r",  &this->depositedEnergyTiming_r,         "depositedEnergyTiming_r/F");
@@ -223,6 +224,7 @@ void CreateTree::Clear()
   Event	= 0;
   
   depositedEnergyTotal = 0.;
+  depositedEnergyEscapeWorld=0./
   nTracksT1 = 0;
   nTracksT2 = 0;
   nTracksE1 = 0;
