@@ -282,7 +282,13 @@ int main(int argc,char** argv)
     G4UIExecutive * ui = new G4UIExecutive(argc,argv,session);
     #ifdef G4VIS_USE
 
-    UImanager -> ApplyCommand("/control/execute "+gps_instructions_file);     
+    //    UImanager -> ApplyCommand("/control/execute "+gps_instructions_file);     
+    cout<<"running init_vis.mac"<<endl;
+    UImanager -> ApplyCommand("/control/execute init_vis.mac");     
+    if(ui->IsGUI()){
+      cout<<"running gui.mac"<<endl;
+      UImanager->ApplyCommand("/control/execute gui.mac");
+    }
     cout << "ok finqui ... " << endl;
     #endif
     ui -> SessionStart();

@@ -50,5 +50,5 @@
 #/gps/particle gamma
 #/gps/ang/type iso
 
-#/tracking/verbose 1
-/run/beamOn 1
+/tracking/verbose 1
+

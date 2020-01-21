@@ -38,7 +38,7 @@
 
 class G4Event;
 class G4GeneralParticleSource;
-
+class G4ParticleGun;
 
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -53,7 +53,8 @@ public:
   void GeneratePrimaries(G4Event*);
   
 private:
-  G4GeneralParticleSource* gun;
+  //G4GeneralParticleSource* gun;
+  G4ParticleGun* gun;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
