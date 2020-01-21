@@ -49,21 +49,22 @@
 
 PrimaryGeneratorAction::PrimaryGeneratorAction(const G4double& z_0)
 {
-  //G4GeneralParticleSource* gps = new G4GeneralParticleSource();
-  G4ParticleGun* gps = new G4ParticleGun(1);
+  G4GeneralParticleSource* gps = new G4GeneralParticleSource();
+  /*G4ParticleGun* gps = new G4ParticleGun(1);
   auto particleDefinition
     = G4ParticleTable::GetParticleTable()->FindParticle("e-");
   gps->SetParticleDefinition(particleDefinition);
   gps->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));
   gps->SetParticleEnergy(5000.*MeV);
+  */
   
-  //gps->GetCurrentSource()->GetEneDist()->SetMonoEnergy(0.511*MeV);
+  gps->GetCurrentSource()->GetEneDist()->SetMonoEnergy(0.511*MeV);
   
-  // G4ThreeVector direction(1.,0.,0.);
-  // gps->GetCurrentSource()->GetAngDist()->SetParticleMomentumDirection(direction);
+  G4ThreeVector direction(1.,0.,0.);
+  gps->GetCurrentSource()->GetAngDist()->SetParticleMomentumDirection(direction);
   
-  //G4ThreeVector posCentre(0.*CLHEP::mm,0.*CLHEP::mm,z_0);
-  //gps->GetCurrentSource()->GetPosDist()->SetCentreCoords(posCentre);
+  G4ThreeVector posCentre(0.*CLHEP::mm,0.*CLHEP::mm,z_0);
+  gps->GetCurrentSource()->GetPosDist()->SetCentreCoords(posCentre);
   
   gun = gps;
 }

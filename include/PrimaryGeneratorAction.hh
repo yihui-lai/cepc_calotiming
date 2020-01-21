@@ -53,8 +53,8 @@ public:
   void GeneratePrimaries(G4Event*);
   
 private:
-  //G4GeneralParticleSource* gun;
-  G4ParticleGun* gun;
+  G4GeneralParticleSource* gun;
+  //G4ParticleGun* gun;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

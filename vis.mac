@@ -1,11 +1,11 @@
 # Use this open statement to create an OpenGL view:
-/vis/open OGL 600x600-0+0
+/vis/open OGL 1200x300-0+0
 #/vis/open Xm
 
 
 # Disable auto refresh and quieten vis messages whilst scene and
 # trajectories are established:
-#/vis/viewer/set/autoRefresh false
+/vis/viewer/set/autoRefresh false
 #/vis/verbose errors
 
 
@@ -27,7 +27,7 @@
 /vis/viewer/set/viewpointThetaPhi 270 0 deg 
 
 # Specify zoom value:
-/vis/viewer/zoomTo 2
+/vis/viewer/zoomTo 150
 
 # Specify style (surface or wireframe):
 #/vis/viewer/set/style wireframe
@@ -75,10 +75,10 @@
 /vis/modeling/trajectories/drawByParticleID-0/set opticalphoton cyan
 #
 # To superimpose all of the events from a given run:
-/vis/scene/endOfEventAction accumulate 10000
+/vis/scene/endOfEventAction accumulate 1
 #
 # Re-establish auto refreshing and verbosity:
-#/vis/viewer/set/autoRefresh true
+/vis/viewer/set/autoRefresh true
 #/vis/verbose warnings
 #
 # For file-based drivers, use this to create an empty detector view:
@@ -87,7 +87,7 @@
 /units/list
 
 /gps/energy 120 GeV
-/gps/particle geantino
+/gps/particle pi-
 /gps/pos/type Plane
 /gps/pos/shape Square
 /gps/pos/centre 0 0 -1900 mm
@@ -106,4 +106,4 @@
 
 
 #/tracking/verbose 1
-/run/beamOn 1
+#/run/beamOn 1
