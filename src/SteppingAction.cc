@@ -328,20 +328,25 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
   
   
   // non optical photon
+  // not really photons?  everything except optical photons?
   else
   {
     //G4cout << ">>> begin non optical photon" << G4endl;
-    
-    G4double energy = theStep->GetTotalEnergyDeposit() - theStep->GetNonIonizingEnergyDeposit();
+
+
+    // this is very important. Which do I want? total?  total-non-ionizing?  ionizing?    
+    G4double energy = theStep->GetTotalEnergyDeposit();
+    //G4double energy = theStep->GetTotalEnergyDeposit() - theStep->GetNonIonizingEnergyDeposit();
+
+
+
 //    if ( energy == 0. ) return;
 
     CreateTree::Instance() -> depositedEnergyTotal += energy/GeV;
 
-    if(volume==fDetConstruction->GetWorldPV) {
-      G4ThreeVector haha = (step->GetPreStepPoint())->GetPosition();
-      G4ThreeVector haha2 = (step->GetPostStepPoint())->GetPosition();
-      bool haha4=((step->GetPostStepPoint())->GetStepStatus())==fWorldBoundary;
-      if(haha4) CreateTree::Instance() -> depositedEnergyEscapeWorld += energy/GeV;
+    if(thePrePVName.contains("world")) {
+      bool haha4=((theStep->GetPostStepPoint())->GetStepStatus())==fWorldBoundary;
+      if(haha4) CreateTree::Instance() -> depositedEnergyEscapeWorld += (theStep->GetPostStepPoint())->GetKineticEnergy()/GeV;
     }
 
 

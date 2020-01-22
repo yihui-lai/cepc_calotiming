@@ -14,6 +14,7 @@ void CC_Analyzer() {
   float depositedEnergyTiming_f,depositedEnergyTiming_r;
   float depositedEnergyECAL_f,depositedEnergyECAL_r;
   float depositedEnergyHCAL;
+  float depositedEnergyEscapeWorld;
 
   t1->SetBranchAddress("depositedEnergyTotal",&depositedEnergyTotal);
   t1->SetBranchAddress("depositedEnergyWorld",&depositedEnergyWorld);
@@ -22,6 +23,7 @@ void CC_Analyzer() {
   t1->SetBranchAddress("depositedEnergyECAL_f",&depositedEnergyECAL_f);
   t1->SetBranchAddress("depositedEnergyECAL_r",&depositedEnergyECAL_r);
   t1->SetBranchAddress("depositedEnergyHCAL",&depositedEnergyHCAL);
+  t1->SetBranchAddress("depositedEnergyEscapeWorld",&depositedEnergyEscapeWorld);
 
   Int_t nentries = (Int_t)t1->GetEntries();
   for(Int_t i=0;i<nentries; i++) {
@@ -32,9 +34,10 @@ void CC_Analyzer() {
     std::cout<<"timing front energy deposited is "<<depositedEnergyTiming_f<<std::endl;
     std::cout<<"timing rear energy deposited is "<<depositedEnergyTiming_r<<std::endl;
     std::cout<<"ECAL front energy deposited is "<<depositedEnergyECAL_f<<std::endl;
-    std::cout<<"ECAL read energy deposited is "<<depositedEnergyECAL_r<<std::endl;
-    std::cout<<"ECAL read energy deposited is "<<depositedEnergyHCAL<<std::endl;
-    float eee=depositedEnergyTiming_f+depositedEnergyTiming_r+depositedEnergyECAL_f+depositedEnergyECAL_r+depositedEnergyHCAL;
+    std::cout<<"ECAL rear energy deposited is "<<depositedEnergyECAL_r<<std::endl;
+    std::cout<<"HCAL  energy deposited is "<<depositedEnergyHCAL<<std::endl;
+    std::cout<<"escape energy deposited is "<<depositedEnergyEscapeWorld<<std::endl;
+    float eee=depositedEnergyTiming_f+depositedEnergyTiming_r+depositedEnergyECAL_f+depositedEnergyECAL_r+depositedEnergyHCAL+depositedEnergyEscapeWorld;
     std::cout<<" sum is "<<eee<<std::endl;
   }
 

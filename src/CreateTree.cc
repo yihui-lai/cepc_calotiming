@@ -224,7 +224,7 @@ void CreateTree::Clear()
   Event	= 0;
   
   depositedEnergyTotal = 0.;
-  depositedEnergyEscapeWorld=0./
+  depositedEnergyEscapeWorld=0.;
   nTracksT1 = 0;
   nTracksT2 = 0;
   nTracksE1 = 0;
