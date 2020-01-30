@@ -17,70 +17,54 @@ using std::vector;
 TTree          *fChain;   //!pointer to the analyzed TTree or TChain               
 Int_t           fCurrent; //!current Tree number in a TChain                       
 
+
+
+void resolution(const char* inputfilename,double aamean,double aarms) {
+
+  std::cout<<"file name is "<<inputfilename<<std::endl;
+  TFile *f = new TFile(inputfilename);
+  TH1F* nhist = static_cast<TH1F*>(f->Get("hTotalE")->Clone());
+  Int_t imax = nhist->GetMaximumBin();
+  Double_t amax = nhist->GetBinCenter(imax);
+  std::cout<<"hist max at "<<amax<<std::endl;
+  Double_t arms = nhist->GetRMS();
+  std::cout<<"hist rms is "<<arms<<std::endl;
+  TF1 *f1 = new TF1("f1","gaus",amax-2*arms,amax+2*arms);
+  nhist->Fit("f1","R0");
+  TF1 *fit=nhist->GetFunction("f1");
+  Double_t p0= f1->GetParameter(0);
+  Double_t p1= f1->GetParameter(1);
+  Double_t p2= f1->GetParameter(2);
+  std::cout<<"fit parameters are "<<p0<<" "<<p1<<" "<<p2<<std::endl;
+  aamean=p1;
+  aarms=p2;
+}
+
+
+
 void res() {
 
-  gStyle->SetOptStat(111111);
-
-  TString canvName = "Fig_";
-  canvName += "haha";
-  int W = 800;
-  int H = 600;
-  TCanvas* canv = new TCanvas(canvName,canvName,50,50,W,H);
-  // references for T, B, L, R                                                  
-  float T = 0.08*H;
-  float B = 0.12*H;
-  float L = 0.12*W;
-  float R = 0.04*W;
-
-  canv->SetFillColor(0);
-  canv->SetBorderMode(0);
-  canv->SetFrameFillStyle(0);
-  canv->SetFrameBorderMode(0);
-  canv->SetLeftMargin( L/W );
-  canv->SetRightMargin( R/W );
-  canv->SetTopMargin( T/H );
-  canv->SetBottomMargin( B/H );
-  canv->SetTickx(0);
-  canv->SetTicky(0);
-
-  float x1_l = 0.9;
-  float y1_l = 0.80;
-  float dx_l = 0.60;
-  float dy_l = 0.1;
-  float x0_l = x1_l-dx_l;
-  float y0_l = y1_l-dy_l;
-
-  TLegend *lgd = new TLegend(x0_l,y0_l,x1_l, y1_l);
-  lgd->SetBorderSize(0); lgd->SetTextSize(0.04); lgd->SetTextFont(62); lgd->SetFillColor(\
-											 0);
+  //  gStyle->SetOptStat(111111);
 
 
+  Int_t npoints=6;
+  double aamean[npoints],aarms[npoints],rrres[npoints];
+  for(int j=0;j<npoints;j++){
+    resolution("pions_50GeV_hists.root",aamean[j],aarms[j]);
+    rrres[j]=0;
+    if(aamean[j]!=0) rrres[j]=aarms[j]/aamean[j];
+    std::cout<<j<<" "<<aamean[j]<<" "<<rrres[j]<<std::endl;
+  }
+  
 
-
-
-  TFile *f = new TFile("pions_50GeV_hists.root");
-  // 
-    TH1F* nhist = static_cast<TH1F*>(f->Get("hTotalE")->Clone());
-    Int_t imax = nhist->GetMaximumBin();
-    Double_t amax = nhist->GetBinCenter(imax);
-    std::cout<<"hist max at "<<amax<<std::endl;
-    Double_t arms = nhist->GetRMS();
-    std::cout<<"hist rms is "<<arms<<std::endl;
-    TF1 *f1 = new TF1("f1","gaus",amax-2*arms,amax+2*arms);
-    nhist->Fit("f1","R");
-    nhist->Draw("");
-
-
-
-    lgd->AddEntry(nhist, "haha", "l");
-
-
-    lgd->Draw();
-
-
-  canv->Update();
-  canv->RedrawAxis();
-  canv->GetFrame()->Draw();
+  
+  auto Canvas= new TCanvas("Canvas","Canvas",200,10,700,500);
+  Canvas->SetGrid();
+  auto g = new TGraph(npoints,aamean,rrres);
+  g->SetMarkerStyle(6);
+  //g->Draw("AP");
+  
+  
 
 
   return;
