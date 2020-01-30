@@ -9,7 +9,7 @@
 
 void CC_Ana(const char* inputfilename,const char* outputfilename) {
 
-  TH1F *hEscapeE = new TH1F("hEscapeE","energy escaping world (GeV)",100,0.,100.);
+  TH1F *hTotalE = new TH1F("hTotalE","energy total world (GeV)",100,0.,100.);
 
   TFile *f = new TFile(inputfilename);
   TTree *t1 = (TTree*)f->Get("tree");
@@ -44,13 +44,13 @@ void CC_Ana(const char* inputfilename,const char* outputfilename) {
     std::cout<<"escape energy deposited is "<<depositedEnergyEscapeWorld<<std::endl;
     float eee=depositedEnergyTiming_f+depositedEnergyTiming_r+depositedEnergyECAL_f+depositedEnergyECAL_r+depositedEnergyHCAL+depositedEnergyEscapeWorld;
     std::cout<<" sum is "<<eee<<std::endl;
-    hEscapeE->Fill(depositedEnergyEscapeWorld);
+    hTotalE->Fill(depositedEnergyTotal);
   }
 
   f->Close();
 
   TFile * out = new TFile(outputfilename,"RECREATE");
-  hEscapeE->Write();
+  hTotalE->Write();
   out->Close();
 
 }
