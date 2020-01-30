@@ -25,7 +25,7 @@ echo $LD_LIBRARY_PATH
 #
 
 
- ./CEPC_CaloTiming -c template.cfg -m run_5GeV.mac -o pions_5GeV > run.log
+ ./CEPC_CaloTiming -c template.cfg -m run_5GeV.mac -o pions_5GeV > run_5GeV.log
 
 exitcode=$?
 

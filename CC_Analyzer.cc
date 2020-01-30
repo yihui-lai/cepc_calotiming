@@ -6,9 +6,12 @@
 #include "TH2.h"
 #include "TRandom.h"
 
-void CC_Analyzer() {
 
-  TFile *f = new TFile("testtest.root");
+void CC_Ana(const char* inputfilename,const char* outputfilename) {
+
+  TH1F *hEscapeE = new TH1F("hEscapeE","energy escaping world (GeV)",100,0.,100.);
+
+  TFile *f = new TFile(inputfilename);
   TTree *t1 = (TTree*)f->Get("tree");
   float depositedEnergyTotal,depositedEnergyWorld;
   float depositedEnergyTiming_f,depositedEnergyTiming_r;
@@ -25,6 +28,8 @@ void CC_Analyzer() {
   t1->SetBranchAddress("depositedEnergyHCAL",&depositedEnergyHCAL);
   t1->SetBranchAddress("depositedEnergyEscapeWorld",&depositedEnergyEscapeWorld);
 
+
+
   Int_t nentries = (Int_t)t1->GetEntries();
   for(Int_t i=0;i<nentries; i++) {
     t1->GetEntry(i);
@@ -39,6 +44,23 @@ void CC_Analyzer() {
     std::cout<<"escape energy deposited is "<<depositedEnergyEscapeWorld<<std::endl;
     float eee=depositedEnergyTiming_f+depositedEnergyTiming_r+depositedEnergyECAL_f+depositedEnergyECAL_r+depositedEnergyHCAL+depositedEnergyEscapeWorld;
     std::cout<<" sum is "<<eee<<std::endl;
+    hEscapeE->Fill(depositedEnergyEscapeWorld);
   }
 
+  f->Close();
+
+  TFile * out = new TFile(outputfilename,"RECREATE");
+  hEscapeE->Write();
+  out->Close();
+
+}
+
+
+void CC_Analyzer() {
+  CC_Ana("pions_1GeV.root","pions_1GeV_hists.root");
+  CC_Ana("pions_5GeV.root","pions_5GeV_hists.root");
+  CC_Ana("pions_10GeV.root","pions_10GeV_hists.root");
+  CC_Ana("pions_20GeV.root","pions_20GeV_hists.root");
+  CC_Ana("pions_50GeV.root","pions_50GeV_hists.root");
+  CC_Ana("pions_100GeV.root","pions_100GeV_hists.root");
 }

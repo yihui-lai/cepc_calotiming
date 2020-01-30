@@ -7,8 +7,7 @@ source /cvmfs/sft.cern.ch/lcg/views/LCG_95/x86_64-slc6-gcc62-opt/setup.sh
 source $ROOTSYS/bin/thisroot.sh
 export LIBRARY_PATH=/home/eno/dualReadout/fakelib:$LIBRARY_PATH
 export LD_LIBRARY_PATH=/home/eno/dualReadout/fakelib:$LD_LIBRARY_PATH
-echo $LIBRARY_path
-echo $LD_LIBRARY_PATH
+
 
 
 
