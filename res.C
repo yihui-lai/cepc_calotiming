@@ -19,7 +19,7 @@ Int_t           fCurrent; //!current Tree number in a TChain
 
 
 
-void resolution(const char* inputfilename,double aamean,double aarms) {
+void resolution(const char* inputfilename,double* aamean,double* aarms) {
 
   std::cout<<"file name is "<<inputfilename<<std::endl;
   TFile *f = new TFile(inputfilename);
@@ -36,8 +36,8 @@ void resolution(const char* inputfilename,double aamean,double aarms) {
   Double_t p1= f1->GetParameter(1);
   Double_t p2= f1->GetParameter(2);
   std::cout<<"fit parameters are "<<p0<<" "<<p1<<" "<<p2<<std::endl;
-  aamean=p1;
-  aarms=p2;
+  *aamean=p1;
+  *aarms=p2;
 }
 
 
@@ -49,11 +49,13 @@ void res() {
 
   Int_t npoints=6;
   double aamean[npoints],aarms[npoints],rrres[npoints];
+  double abc,dej;
   for(int j=0;j<npoints;j++){
-    resolution("pions_50GeV_hists.root",aamean[j],aarms[j]);
+    resolution("pions_50GeV_hists.root",&abc,&dej);
+    aamean[j]=abc;aarms[j]=dej;
     rrres[j]=0;
     if(aamean[j]!=0) rrres[j]=aarms[j]/aamean[j];
-    std::cout<<j<<" "<<aamean[j]<<" "<<rrres[j]<<std::endl;
+    std::cout<<"jjjjjj "<<j<<" "<<aamean[j]<<" "<<rrres[j]<<std::endl;
   }
   
 
@@ -62,7 +64,8 @@ void res() {
   Canvas->SetGrid();
   auto g = new TGraph(npoints,aamean,rrres);
   g->SetMarkerStyle(6);
-  //g->Draw("AP");
+  g->SetMarkerSize(6);
+  g->Draw("ACP");
   
   
 
