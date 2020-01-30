@@ -61,7 +61,13 @@ void res() {
   TFile *f = new TFile("pions_50GeV_hists.root");
   // 
     TH1F* nhist = static_cast<TH1F*>(f->Get("hTotalE")->Clone());
-    nhist->Fit("gaus");
+    Int_t imax = nhist->GetMaximumBin();
+    Double_t amax = nhist->GetBinCenter(imax);
+    std::cout<<"hist max at "<<amax<<std::endl;
+    Double_t arms = nhist->GetRMS();
+    std::cout<<"hist rms is "<<arms<<std::endl;
+    TF1 *f1 = new TF1("f1","gaus",amax-2*arms,amax+2*arms);
+    nhist->Fit("f1","R");
     nhist->Draw("");
 
 
