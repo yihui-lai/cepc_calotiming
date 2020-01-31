@@ -19,6 +19,8 @@ Int_t           fCurrent; //!current Tree number in a TChain
 
 
 
+
+
 void resolution(const char* inputfilename,double* aamean,double* aarms) {
 
   std::cout<<"file name is "<<inputfilename<<std::endl;
@@ -46,12 +48,20 @@ void res() {
 
   //  gStyle->SetOptStat(111111);
 
+  const int npoints=5;
+  const char* filenames[npoints];
+  filenames[0]="pions_5GeV_hists.root"; 
+  filenames[1]="pions_10GeV_hists.root"; 
+  filenames[2]="pions_20GeV_hists.root"; 
+  filenames[3]="pions_50GeV_hists.root"; 
+  filenames[4]="pions_100GeV_hists.root"; 
+  
 
-  Int_t npoints=6;
+
   double aamean[npoints],aarms[npoints],rrres[npoints];
   double abc,dej;
   for(int j=0;j<npoints;j++){
-    resolution("pions_50GeV_hists.root",&abc,&dej);
+    resolution(filenames[j],&abc,&dej);
     aamean[j]=abc;aarms[j]=dej;
     rrres[j]=0;
     if(aamean[j]!=0) rrres[j]=aarms[j]/aamean[j];
@@ -61,11 +71,15 @@ void res() {
 
   
   auto Canvas= new TCanvas("Canvas","Canvas",200,10,700,500);
-  Canvas->SetGrid();
+
   auto g = new TGraph(npoints,aamean,rrres);
-  g->SetMarkerStyle(6);
-  g->SetMarkerSize(6);
-  g->Draw("ACP");
+  TF1 *f2 = new TF1("f2","sqrt([0]*[0]/x+[1]*[1]/x/x+[2]*[2])");
+  g->Fit("f2");
+  gStyle->SetOptFit();
+  g->SetMarkerColor(kBlue);
+  g->SetMarkerStyle(21);
+  g->SetMarkerSize(1.5);
+  g->Draw("AP");
   
   
 
