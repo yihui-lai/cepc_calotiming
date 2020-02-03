@@ -16,7 +16,7 @@ void CC_Ana(const char* inputfilename,const char* outputfilename) {
   float depositedEnergyTotal,depositedEnergyWorld;
   float depositedEnergyTiming_f,depositedEnergyTiming_r;
   float depositedEnergyECAL_f,depositedEnergyECAL_r;
-  float depositedEnergyHCAL;
+  float depositedEnergyHCALAct,depositedEnergyHCALPas;
   float depositedEnergyEscapeWorld;
 
   t1->SetBranchAddress("depositedEnergyTotal",&depositedEnergyTotal);
@@ -25,7 +25,8 @@ void CC_Ana(const char* inputfilename,const char* outputfilename) {
   t1->SetBranchAddress("depositedEnergyTiming_r",&depositedEnergyTiming_r);
   t1->SetBranchAddress("depositedEnergyECAL_f",&depositedEnergyECAL_f);
   t1->SetBranchAddress("depositedEnergyECAL_r",&depositedEnergyECAL_r);
-  t1->SetBranchAddress("depositedEnergyHCAL",&depositedEnergyHCAL);
+  t1->SetBranchAddress("depositedEnergyHCALAct",&depositedEnergyHCALAct);
+  t1->SetBranchAddress("depositedEnergyHCALPas",&depositedEnergyHCALPas);
   t1->SetBranchAddress("depositedEnergyEscapeWorld",&depositedEnergyEscapeWorld);
 
 
@@ -40,10 +41,15 @@ void CC_Ana(const char* inputfilename,const char* outputfilename) {
     std::cout<<"timing rear energy deposited is "<<depositedEnergyTiming_r<<std::endl;
     std::cout<<"ECAL front energy deposited is "<<depositedEnergyECAL_f<<std::endl;
     std::cout<<"ECAL rear energy deposited is "<<depositedEnergyECAL_r<<std::endl;
-    std::cout<<"HCAL  energy deposited is "<<depositedEnergyHCAL<<std::endl;
+    std::cout<<"HCAL act  energy deposited is "<<depositedEnergyHCALAct<<std::endl;
+    std::cout<<"HCAL Pas  energy deposited is "<<depositedEnergyHCALPas<<std::endl;
     std::cout<<"escape energy deposited is "<<depositedEnergyEscapeWorld<<std::endl;
-    float eee=depositedEnergyTiming_f+depositedEnergyTiming_r+depositedEnergyECAL_f+depositedEnergyECAL_r+depositedEnergyHCAL+depositedEnergyEscapeWorld;
-    std::cout<<" sum is "<<eee<<std::endl;
+    float eee=depositedEnergyTiming_f+depositedEnergyTiming_r+depositedEnergyECAL_f+depositedEnergyECAL_r+depositedEnergyHCALAct+depositedEnergyHCALPas+depositedEnergyEscapeWorld;
+    float fff=depositedEnergyTotal+depositedEnergyEscapeWorld;
+    std::cout<<" sum in detectors is "<<eee<<std::endl;
+    std::cout<<" deposited plus escaped is "<<fff<<std::endl;
+    double ggg=20.-fff;
+    std::cout<<" mystery is "<<ggg<<std::endl;
     hTotalE->Fill(depositedEnergyTotal);
   }
 
@@ -56,11 +62,18 @@ void CC_Ana(const char* inputfilename,const char* outputfilename) {
 }
 
 
-void CC_Analyzer() {
+void CC_Analyzer(bool debug) {
+  if(debug) {  
+    std::cout<<"running on temp.root"<<std::endl;
+    CC_Ana("temp.root","temp_hists.root");
+  }
+  else {
+    std::cout<<"running on normal files"<<std::endl;
   CC_Ana("pions_1GeV.root","pions_1GeV_hists.root");
   CC_Ana("pions_5GeV.root","pions_5GeV_hists.root");
   CC_Ana("pions_10GeV.root","pions_10GeV_hists.root");
   CC_Ana("pions_20GeV.root","pions_20GeV_hists.root");
   CC_Ana("pions_50GeV.root","pions_50GeV_hists.root");
   CC_Ana("pions_100GeV.root","pions_100GeV_hists.root");
+  }
 }

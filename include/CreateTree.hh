@@ -69,7 +69,8 @@ public:
   float depositedEnergyTiming_r;
   float depositedEnergyECAL_f;
   float depositedEnergyECAL_r;
-  float depositedEnergyHCAL;
+  float depositedEnergyHCALAct;
+  float depositedEnergyHCALPas;
 
   int tot_phot_cer_Timing_f;
   int tot_phot_cer_Timing_r;
@@ -85,8 +86,8 @@ public:
   //energy deposit in each trasnversally segmented channel
   float Edep_Timing_f_ch[18];
   float Edep_Timing_r_ch[18];
-  float Edep_ECAL_f_ch[100];
-  float Edep_ECAL_r_ch[100];
+  float Edep_ECAL_f_ch[2500];
+  float Edep_ECAL_r_ch[2500];
 
 
   /*

@@ -62,7 +62,8 @@ CreateTree::CreateTree (TString name)
   this -> GetTree() -> Branch("depositedEnergyTiming_r",  &this->depositedEnergyTiming_r,         "depositedEnergyTiming_r/F");
   this -> GetTree() -> Branch("depositedEnergyECAL_f",     &this->depositedEnergyECAL_f,            "depositedEnergyECAL_f/F");
   this -> GetTree() -> Branch("depositedEnergyECAL_r",     &this->depositedEnergyECAL_r,            "depositedEnergyECAL_r/F");
-  this -> GetTree() -> Branch("depositedEnergyHCAL",       &this->depositedEnergyHCAL,               "depositedEnergyHCAL/F");
+  this -> GetTree() -> Branch("depositedEnergyHCALAct",       &this->depositedEnergyHCALAct,               "depositedEnergyHCALAct/F");
+  this -> GetTree() -> Branch("depositedEnergyHCALPas",       &this->depositedEnergyHCALPas,               "depositedEnergyHCALPas/F");
 
   this -> GetTree() -> Branch("depositedEnergyWorld",     	&this->depositedEnergyWorld,         	"depositedEnergyWorld/F");
 
@@ -239,7 +240,8 @@ void CreateTree::Clear()
   depositedEnergyTiming_r = 0.;
   depositedEnergyECAL_f = 0.;
   depositedEnergyECAL_r = 0.;
-  depositedEnergyHCAL = 0.;
+  depositedEnergyHCALAct = 0.;
+  depositedEnergyHCALPas = 0.;
 
   tot_phot_cer_Timing_f = 0.;
   tot_phot_cer_Timing_r = 0.;

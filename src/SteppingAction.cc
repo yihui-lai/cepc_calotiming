@@ -108,6 +108,19 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
   G4double global_y = thePrePosition.y()/mm;
   G4double global_z = thePrePosition.z()/mm;
   
+
+    G4double energy = theStep->GetTotalEnergyDeposit();
+    //std::cout<<"prename "<<thePrePVName<<" postname "<<thePostPVName<<" edep "<<energy<<" final "<<CreateTree::Instance()->depositedEnergyTotal<<std::endl;
+    CreateTree::Instance() -> depositedEnergyTotal += energy/GeV;
+
+    //    if(thePrePVName.contains("world")) {
+      bool haha4=((theStep->GetPostStepPoint())->GetStepStatus())==fWorldBoundary;
+      if(haha4) {
+	//std::cout<<"leaving "<<std::endl;
+	CreateTree::Instance() -> depositedEnergyEscapeWorld += (theStep->GetPostStepPoint())->GetKineticEnergy()/GeV;
+      }
+      //}
+
   
   // optical photon
 
@@ -335,19 +348,13 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
 
 
     // this is very important. Which do I want? total?  total-non-ionizing?  ionizing?    
-    G4double energy = theStep->GetTotalEnergyDeposit();
+
     //G4double energy = theStep->GetTotalEnergyDeposit() - theStep->GetNonIonizingEnergyDeposit();
 
 
 
 //    if ( energy == 0. ) return;
 
-    CreateTree::Instance() -> depositedEnergyTotal += energy/GeV;
-
-    if(thePrePVName.contains("world")) {
-      bool haha4=((theStep->GetPostStepPoint())->GetStepStatus())==fWorldBoundary;
-      if(haha4) CreateTree::Instance() -> depositedEnergyEscapeWorld += (theStep->GetPostStepPoint())->GetKineticEnergy()/GeV;
-    }
 
 
    //count tracks before SCEPCAL at the tracker layers
@@ -445,7 +452,7 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
     if( thePrePVName.contains("ecalCrystalP_f") )
     {
       CreateTree::Instance()->depositedEnergyECAL_f += energy/GeV;
-      for (int iCh = 0; iCh<100; iCh++)
+      for (int iCh = 0; iCh<2500; iCh++)
       {
 	if (thePrePVName == Form("ecalCrystalP_f_%d", iCh)) CreateTree::Instance()->Edep_ECAL_f_ch[iCh] += energy/GeV;
       }
@@ -453,7 +460,7 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
     if( thePrePVName.contains("ecalCrystalP_r") )
     {
       CreateTree::Instance()->depositedEnergyECAL_r += energy/GeV;
-      for (int iCh = 0; iCh<100; iCh++)
+      for (int iCh = 0; iCh<2500; iCh++)
       {
 	if (thePrePVName == Form("ecalCrystalP_r_%d", iCh)) CreateTree::Instance()->Edep_ECAL_r_ch[iCh] += energy/GeV;
       }
@@ -463,7 +470,15 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
     //hcal
     if( thePrePVName.contains("hcalTile_layer") )
     {
-       CreateTree::Instance()->depositedEnergyHCAL += energy/GeV;
+       CreateTree::Instance()->depositedEnergyHCALAct += energy/GeV;
+//      for (int iLayer = 0; iLayer<100; iLayer++)
+  //    {
+//	if (thePrePVName == Form("ecalCrystalP_f_%d", iCh)) CreateTree::Instance()->Edep_ECAL_f_ch[iLayer] += energy/GeV;
+//      }
+    }
+    if( thePrePVName.contains("hcalAbs") )
+    {
+       CreateTree::Instance()->depositedEnergyHCALPas += energy/GeV;
 //      for (int iLayer = 0; iLayer<100; iLayer++)
   //    {
 //	if (thePrePVName == Form("ecalCrystalP_f_%d", iCh)) CreateTree::Instance()->Edep_ECAL_f_ch[iLayer] += energy/GeV;
