@@ -159,9 +159,9 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
     if(// ( theTrack->GetLogicalVolumeAtVertex()->GetName().contains("core")) &&
         (nStep == 1) && (processName == "Cerenkov") )
     {
-
-
-//      std::cout << " generated Cerenkov photon" << std::endl;
+      
+      TrackInformation* theTrackInfo = (TrackInformation*)(theTrack->GetUserInformation());
+      //std::cout << " generated Cerenkov photon with parent " << theTrackInfo->GetParentName()<<std::endl;
       float photWL = MyMaterials::fromEvToNm(theTrack->GetTotalEnergy()/eV);
 
       //kill very long wavelengths
