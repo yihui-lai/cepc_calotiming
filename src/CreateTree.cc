@@ -66,6 +66,11 @@ CreateTree::CreateTree (TString name)
   this -> GetTree() -> Branch("depositedEnergyHCALPas",       &this->depositedEnergyHCALPas,               "depositedEnergyHCALPas/F");
 
   this -> GetTree() -> Branch("depositedEnergyWorld",     	&this->depositedEnergyWorld,         	"depositedEnergyWorld/F");
+  this -> GetTree() -> Branch("depositedEnergyTimingGap",     	&this->depositedEnergyTimingGap,         	"depositedEnergyTimingGap/F");
+  this -> GetTree() -> Branch("depositedEnergyServices",     	&this->depositedEnergyServices,         	"depositedEnergyServices/F");
+  this -> GetTree() -> Branch("depositedEnergyEcalGap",     	&this->depositedEnergyEcalGap,         	"depositedEnergyEcalGap/F");
+  this -> GetTree() -> Branch("depositedEnergyEcalDet",     	&this->depositedEnergyEcalDet,         	"depositedEnergyEcalDet/F");
+  this -> GetTree() -> Branch("depositedEnergySolenoid",     	&this->depositedEnergySolenoid,         	"depositedEnergySolenoid/F");
 
   //single channels
   this -> GetTree() -> Branch("Edep_Tracker_layer", 		&this->Edep_Tracker_layer,    		"Edep_Tracker_layer[6]/F");
@@ -266,6 +271,11 @@ void CreateTree::Clear()
   }
 
   depositedEnergyWorld = 0.;
+  depositedEnergyServices = 0.;
+  depositedEnergyTimingGap = 0.;
+  depositedEnergyEcalGap = 0.;
+  depositedEnergyEcalDet = 0.;
+  depositedEnergySolenoid = 0.;
   
 
   

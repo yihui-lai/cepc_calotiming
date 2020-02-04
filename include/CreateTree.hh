@@ -72,6 +72,14 @@ public:
   float depositedEnergyHCALAct;
   float depositedEnergyHCALPas;
 
+  float depositedEnergyServices;
+  float depositedEnergyTimingGap;
+  float depositedEnergyEcalGap;
+  float depositedEnergyEcalDet;
+  float depositedEnergySolenoid;
+
+  
+
   int tot_phot_cer_Timing_f;
   int tot_phot_cer_Timing_r;
   int tot_phot_cer_ECAL_f ;

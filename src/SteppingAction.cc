@@ -490,7 +490,41 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
     {
       CreateTree::Instance() -> depositedEnergyWorld += energy/GeV;
     }
+
+
+
+    if( thePrePVName.contains("services") )
+    {
+      CreateTree::Instance() -> depositedEnergyServices += energy/GeV;
+    }
+
     
+
+    if( thePrePVName.contains("TimingGap") )
+    {
+      CreateTree::Instance() -> depositedEnergyTimingGap += energy/GeV;
+    }
+
+
+    if( thePrePVName.contains("ecalGap") )
+    {
+      CreateTree::Instance() -> depositedEnergyEcalGap += energy/GeV;
+    }
+
+
+    if( thePrePVName.contains("ecalDet") )
+    {
+      CreateTree::Instance() -> depositedEnergyEcalDet += energy/GeV;
+    }
+
+
+    if( thePrePVName.contains("solenoid") )
+    {
+      CreateTree::Instance() -> depositedEnergySolenoid += energy/GeV;
+    }
+
+
+
     //G4cout << ">>> end non optical photon" << G4endl;
   } // non optical photon
   

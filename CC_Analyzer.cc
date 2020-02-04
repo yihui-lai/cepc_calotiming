@@ -18,6 +18,11 @@ void CC_Ana(const char* inputfilename,const char* outputfilename) {
   float depositedEnergyECAL_f,depositedEnergyECAL_r;
   float depositedEnergyHCALAct,depositedEnergyHCALPas;
   float depositedEnergyEscapeWorld;
+  float depositedEnergyServices;
+  float depositedEnergyTimingGap;
+  float depositedEnergyEcalGap;
+  float depositedEnergyEcalDet;
+  float depositedEnergySolenoid;
 
   t1->SetBranchAddress("depositedEnergyTotal",&depositedEnergyTotal);
   t1->SetBranchAddress("depositedEnergyWorld",&depositedEnergyWorld);
@@ -28,7 +33,11 @@ void CC_Ana(const char* inputfilename,const char* outputfilename) {
   t1->SetBranchAddress("depositedEnergyHCALAct",&depositedEnergyHCALAct);
   t1->SetBranchAddress("depositedEnergyHCALPas",&depositedEnergyHCALPas);
   t1->SetBranchAddress("depositedEnergyEscapeWorld",&depositedEnergyEscapeWorld);
-
+  t1->SetBranchAddress("depositedEnergyServices",&depositedEnergyServices);
+  t1->SetBranchAddress("depositedEnergyTimingGap",&depositedEnergyTimingGap);
+  t1->SetBranchAddress("depositedEnergyEcalGap",&depositedEnergyEcalGap);
+  t1->SetBranchAddress("depositedEnergyEcalDet",&depositedEnergyEcalDet);
+  t1->SetBranchAddress("depositedEnergySolenoid",&depositedEnergySolenoid);
 
 
   Int_t nentries = (Int_t)t1->GetEntries();
@@ -44,7 +53,12 @@ void CC_Ana(const char* inputfilename,const char* outputfilename) {
     std::cout<<"HCAL act  energy deposited is "<<depositedEnergyHCALAct<<std::endl;
     std::cout<<"HCAL Pas  energy deposited is "<<depositedEnergyHCALPas<<std::endl;
     std::cout<<"escape energy deposited is "<<depositedEnergyEscapeWorld<<std::endl;
-    float eee=depositedEnergyTiming_f+depositedEnergyTiming_r+depositedEnergyECAL_f+depositedEnergyECAL_r+depositedEnergyHCALAct+depositedEnergyHCALPas+depositedEnergyEscapeWorld;
+    std::cout<<"Services energy deposited is "<<depositedEnergyServices<<std::endl;
+    std::cout<<"Timing Gap energy deposited is "<<depositedEnergyTimingGap<<std::endl;
+    std::cout<<"Ecal gap energy deposited is "<<depositedEnergyEcalGap<<std::endl;
+    std::cout<<"Ecal det energy deposited is "<<depositedEnergyEcalDet<<std::endl;
+    std::cout<<"Solenoid energy deposited is "<<depositedEnergySolenoid<<std::endl;
+    float eee=depositedEnergyTiming_f+depositedEnergyTiming_r+depositedEnergyECAL_f+depositedEnergyECAL_r+depositedEnergyHCALAct+depositedEnergyHCALPas+depositedEnergyWorld+depositedEnergyServices+depositedEnergyTimingGap+depositedEnergyEcalGap+depositedEnergyEcalDet+depositedEnergySolenoid;
     float fff=depositedEnergyTotal+depositedEnergyEscapeWorld;
     std::cout<<" sum in detectors is "<<eee<<std::endl;
     std::cout<<" deposited plus escaped is "<<fff<<std::endl;
