@@ -1,4 +1,3 @@
-
 #include "TROOT.h"
 #include "TFile.h"
 #include "TTree.h"
@@ -13,7 +12,14 @@ void CC_Ana(const char* inputfilename,const char* outputfilename) {
   TH1F *hHcalPasE = new TH1F("hHcalPasE","energy HCAL passive (GeV)",600,0.,150.);
   TH1F *hHcalActE = new TH1F("hHcalActE","ioninging HCAL energy active (GeV)",600,0.,1.);
   TH2F *hEcalHcal = new TH2F("hEcalHcal","ecal versus hcal passive ",600,0.,50.,600,0.,50.);
-
+  TH2F *hEcalEcalem = new TH2F("hEcalEcalem","ecal versus ecal",600,0.,50.,600,0.,1.2);
+  TH2F *hEcalfEcalem = new TH2F("hEcalfEcalem","em frac versus ecal hcal ",600,0.,50.,600,0.,1.2);
+  TH1F *hcerTimingf= new TH1F("hcerTimingf","number cerenkov photons timing front",1000,0.,1000.);
+  TH1F *hcerTimingr= new TH1F("hcerTimingr","number cerenkov photons timing read",1000,0.,1000.);
+  TH1F *hcerECALf= new TH1F("hcerECALf","number cerenkov photons ECAL front",1000,0.,1000.);
+  TH1F *hcerECALr= new TH1F("hcerECALr","number cerenkov photons ECAL read",1000,0.,1000.);
+  TH1F *hcerHCAL= new TH1F("hcerHCAL","number cerenkov photons HCAL",1000,0.,1000.);
+  TH1F *hHCALActPas = new TH1F("hHCALActPas","ratio of passive to active HCAL energy",1000,0.,500.);
 
   TFile *f = new TFile(inputfilename);
   TTree *t1 = (TTree*)f->Get("tree");
@@ -49,6 +55,8 @@ void CC_Ana(const char* inputfilename,const char* outputfilename) {
   float depositedIonEnergyEcalGap;
   float depositedIonEnergyEcalDet;
   float depositedIonEnergySolenoid;
+
+  int tot_phot_cer_Timing_f,tot_phot_cer_Timing_r,tot_phot_cer_ECAL_f,tot_phot_cer_ECAL_r,tot_phot_cer_HCAL;
 
   t1->SetBranchAddress("depositedEnergyEscapeWorld",&depositedEnergyEscapeWorld);
 
@@ -95,6 +103,11 @@ void CC_Ana(const char* inputfilename,const char* outputfilename) {
   t1->SetBranchAddress("depositedIonEnergyEcalDet",&depositedIonEnergyEcalDet);
   t1->SetBranchAddress("depositedIonEnergySolenoid",&depositedIonEnergySolenoid);
 
+  t1->SetBranchAddress("tot_phot_cer_Timing_f",&tot_phot_cer_Timing_f);
+  t1->SetBranchAddress("tot_phot_cer_Timing_r",&tot_phot_cer_Timing_r);
+  t1->SetBranchAddress("tot_phot_cer_ECAL_f",&tot_phot_cer_ECAL_f);
+  t1->SetBranchAddress("tot_phot_cer_ECAL_r",&tot_phot_cer_ECAL_r);
+  t1->SetBranchAddress("tot_phot_cer_HCAL",&tot_phot_cer_HCAL);
 
   Int_t nentries = (Int_t)t1->GetEntries();
   for(Int_t i=0;i<nentries; i++) {
@@ -126,6 +139,18 @@ void CC_Ana(const char* inputfilename,const char* outputfilename) {
     hHcalPasE->Fill(depositedEnergyHCALPas);
     hHcalActE->Fill(depositedEnergyHCALAct-depositedIonEnergyHCALAct);
     hEcalHcal->Fill(depositedEnergyHCALPas,ecaltotal);
+    float yyy=depositedEnergyECAL_f+depositedEnergyECAL_r;
+    float yy2=depositedElecEnergyECAL_f+depositedElecEnergyECAL_r;
+    hEcalEcalem->Fill(yyy,yy2);
+    if(yyy>0) hEcalfEcalem->Fill(yyy,yy2/yyy);
+    if(depositedEnergyHCALAct>0) hHCALActPas->Fill(depositedEnergyHCALPas/depositedEnergyHCALAct);
+
+    hcerTimingf->Fill(tot_phot_cer_Timing_f);
+    hcerTimingr->Fill(tot_phot_cer_Timing_r);
+    hcerECALf->Fill(tot_phot_cer_ECAL_f);
+    hcerECALr->Fill(tot_phot_cer_ECAL_r);
+    hcerHCAL->Fill(tot_phot_cer_HCAL);
+
 		    
   }
 
@@ -136,6 +161,14 @@ void CC_Ana(const char* inputfilename,const char* outputfilename) {
   hHcalPasE->Write();
   hHcalActE->Write();
   hEcalHcal->Write();
+  hEcalEcalem->Write();
+  hEcalfEcalem->Write();
+  hcerTimingf->Write();
+  hcerTimingr->Write();
+  hcerECALf->Write();
+  hcerECALr->Write();
+  hcerHCAL->Write();
+  hHCALActPas->Write();
   out->Close();
 
 }
