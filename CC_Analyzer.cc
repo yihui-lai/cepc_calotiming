@@ -9,6 +9,8 @@
 void CC_Ana(const char* inputfilename,const char* outputfilename) {
 
   TH1F *hTotalE = new TH1F("hTotalE","energy total world (GeV)",600,0.,150.);
+
+
   TH1F *hHcalPasE = new TH1F("hHcalPasE","energy HCAL passive (GeV)",600,0.,150.);
   TH1F *hHcalActE = new TH1F("hHcalActE","ioninging HCAL energy active (GeV)",600,0.,1.);
   TH2F *hEcalHcal = new TH2F("hEcalHcal","ecal versus hcal passive ",600,0.,50.,600,0.,50.);
@@ -23,6 +25,9 @@ void CC_Ana(const char* inputfilename,const char* outputfilename) {
 
   TFile *f = new TFile(inputfilename);
   TTree *t1 = (TTree*)f->Get("tree");
+
+  vector<float> *inputMomentum = new vector<float>;
+
   float depositedEnergyEscapeWorld;
 
   float depositedEnergyTotal,depositedEnergyWorld;
@@ -57,6 +62,8 @@ void CC_Ana(const char* inputfilename,const char* outputfilename) {
   float depositedIonEnergySolenoid;
 
   int tot_phot_cer_Timing_f,tot_phot_cer_Timing_r,tot_phot_cer_ECAL_f,tot_phot_cer_ECAL_r,tot_phot_cer_HCAL;
+
+  t1->SetBranchAddress("inputMomentum",&inputMomentum);
 
   t1->SetBranchAddress("depositedEnergyEscapeWorld",&depositedEnergyEscapeWorld);
 
@@ -112,8 +119,10 @@ void CC_Ana(const char* inputfilename,const char* outputfilename) {
   Int_t nentries = (Int_t)t1->GetEntries();
   for(Int_t i=0;i<nentries; i++) {
     t1->GetEntry(i);
-    /*
+    
     std::cout<<endl<<"event number "<<i<<std::endl;
+    std::cout<<(*inputMomentum)[0]<<","<<(*inputMomentum)[1]<<","<<(*inputMomentum)[2]<<","<<(*inputMomentum)[3]<<std::endl;
+    /*
     std::cout<<"total energy deposited is "<<depositedEnergyTotal<<std::endl;
     std::cout<<"world energy deposited is "<<depositedEnergyWorld<<std::endl;
     std::cout<<"timing front energy deposited is "<<depositedEnergyTiming_f<<std::endl;
