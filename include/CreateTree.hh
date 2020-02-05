@@ -98,27 +98,6 @@ public:
   float Edep_ECAL_r_ch[2500];
 
 
-  /*
-  std::vector<float> E_dep_f;
-  std::vector<float> E_dep_time_f;
-  std::vector<float> E_dep_r;
-  std::vector<float> E_dep_time_r;
-  
-  std::vector<float> time_ext_scint;
-  std::vector<float> time_ext_cher;
-  std::vector<float> time_prod_scint;
-  std::vector<float> time_prod_cher;
-
-  std::vector<float> lambda_ext_scint;
-  std::vector<float> lambda_ext_cher;
-  std::vector<float> lambda_prod_scint;
-  std::vector<float> lambda_prod_cher;
-  
-  std::vector<float> time_ext_scint_ref;
-  std::vector<float> time_ext_cher_ref;
-  std::vector<float> time_prod_scint_ref;
-  std::vector<float> time_prod_cher_ref;
-  */
 
 
   TH1F* h_phot_cer_lambda_Timing_f ;
@@ -126,50 +105,8 @@ public:
   TH1F* h_phot_cer_lambda_ECAL_f ;
   TH1F* h_phot_cer_lambda_ECAL_r;
   TH1F* h_phot_cer_lambda_HCAL;
+  TH1F* h_phot_cer_parentID;
 
-  /*
-
-
-  int tot_phot_sci;
-  int tot_phot_cer;
-  int tot_latGap_phot_sci;
-  int tot_latGap_phot_cer;
-  int tot_gap_phot_sci;
-  int tot_gap_phot_cer;
-  int tot_det_phot_sci;
-  int tot_det_phot_cer;
-  
-  TH1F* h_phot_sci_lambda;
-  TH1F* h_phot_sci_E;
-  TH1F* h_phot_sci_time;
-  TH1F* h_phot_sci_angleAtProduction;
-  TH1F* h_phot_cer_lambda;
-  TH1F* h_phot_cer_E;
-  TH1F* h_phot_cer_time;
-  TH1F* h_phot_cer_angleAtProduction;
-  
-  TH1F* h_phot_sci_gap_lambda;
-  TH1F* h_phot_sci_gap_E;
-  TH1F* h_phot_sci_gap_time;
-  TH1F* h_phot_sci_gap_angleAtProduction;
-  TH1F* h_phot_sci_gap_angleWithSurfNormal;
-  TH1F* h_phot_cer_gap_lambda;
-  TH1F* h_phot_cer_gap_E;
-  TH1F* h_phot_cer_gap_time;
-  TH1F* h_phot_cer_gap_angleAtProduction;
-  TH1F* h_phot_cer_gap_angleWithSurfNormal;
-
-  TH1F* h_phot_sci_det_lambda;
-  TH1F* h_phot_sci_det_E;
-  TH1F* h_phot_sci_det_time;
-  TH1F* h_phot_sci_det_angleAtProduction;
-  TH1F* h_phot_sci_det_angleWithSurfNormal;
-  TH1F* h_phot_cer_det_lambda;
-  TH1F* h_phot_cer_det_E;
-  TH1F* h_phot_cer_det_time;
-  TH1F* h_phot_cer_det_angleAtProduction;
-  TH1F* h_phot_cer_det_angleWithSurfNormal;
-  */
 
 };
 

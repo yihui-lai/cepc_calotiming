@@ -28,6 +28,7 @@ public:
 private:
   G4ParticleDefinition* particleDefinition;
   G4String              particleName;
+  G4int              particlePDGid;
   G4int                 particleTrackID;
   G4ThreeVector         particlePosition;
   G4ThreeVector         particleMomentum;
@@ -37,6 +38,7 @@ private:
   
   G4ParticleDefinition* parentDefinition;
   G4String              parentName;
+  G4int              parentPDGid;
   G4int                 parentTrackID;
   G4ThreeVector         parentPosition;
   G4ThreeVector         parentMomentum;
@@ -46,6 +48,7 @@ private:
 public:
   inline G4ParticleDefinition* GetParticleDefinintion() const { return particleDefinition; };
   inline G4String GetParticleName()                     const { return particleName; };
+  inline G4int GetParticlePDGid()                     const { return particlePDGid; };
   inline G4int GetParticleTrackID()                     const { return particleTrackID; };
   inline G4ThreeVector GetParticlePosition()            const { return particlePosition; };
   inline G4ThreeVector GetParticleMomentum()            const { return particleMomentum; };
@@ -55,6 +58,7 @@ public:
   
   inline G4ParticleDefinition* GetParentDefinintion() const { return parentDefinition; };
   inline G4String GetParentName()                     const { return parentName; };
+  inline G4int GetParentPDGid()                     const { return parentPDGid; };
   inline G4int GetParentTrackID()                     const { return parentTrackID; };
   inline G4ThreeVector GetParentPosition()            const { return parentPosition; };
   inline G4ThreeVector GetParentMomentum()            const { return parentMomentum; };

@@ -10,6 +10,7 @@ TrackInformation::TrackInformation()
 {
   particleDefinition = 0;
   particleName = "";
+  particlePDGid=0;
   particleTrackID = 0;
   particlePosition = G4ThreeVector(0.,0.,0.);
   particleMomentum = G4ThreeVector(0.,0.,0.);
@@ -19,6 +20,7 @@ TrackInformation::TrackInformation()
   
   parentDefinition = 0;
   parentName = "";
+  parentPDGid=0;
   parentTrackID = 0;
   parentPosition = G4ThreeVector(0.,0.,0.);
   parentMomentum = G4ThreeVector(0.,0.,0.);
@@ -32,6 +34,7 @@ TrackInformation::TrackInformation(const G4Track* aTrack)
 {
   particleDefinition = aTrack->GetDefinition();
   particleName = aTrack->GetDefinition()->GetParticleName();
+  particlePDGid = aTrack->GetDefinition()->GetPDGEncoding();
   particleTrackID = aTrack->GetTrackID();
   particlePosition = aTrack->GetPosition();
   particleMomentum = aTrack->GetMomentum();
@@ -40,6 +43,7 @@ TrackInformation::TrackInformation(const G4Track* aTrack)
   
   parentDefinition = aTrack->GetDefinition();
   parentName = aTrack->GetDefinition()->GetParticleName();
+  parentPDGid = aTrack->GetDefinition()->GetPDGEncoding();
   parentTrackID = aTrack->GetTrackID();
   parentPosition = aTrack->GetPosition();
   parentMomentum = aTrack->GetMomentum();
@@ -53,6 +57,7 @@ TrackInformation::TrackInformation(const TrackInformation* aTrackInfo)
 {
   particleDefinition = aTrackInfo->particleDefinition;
   particleName = aTrackInfo->particleName;
+  particlePDGid = aTrackInfo->particlePDGid;
   particleTrackID = aTrackInfo->particleTrackID;
   particlePosition = aTrackInfo->particlePosition;
   particleMomentum = aTrackInfo->particleMomentum;
@@ -61,7 +66,8 @@ TrackInformation::TrackInformation(const TrackInformation* aTrackInfo)
   particleTime = aTrackInfo->particleTime;
   
   parentDefinition = aTrackInfo->parentDefinition;
-  parentName = aTrackInfo->parentName;
+   parentName = aTrackInfo->parentName;
+   parentPDGid = aTrackInfo->parentPDGid;
   parentTrackID = aTrackInfo->parentTrackID;
   parentPosition = aTrackInfo->parentPosition;
   parentMomentum = aTrackInfo->parentMomentum;
@@ -75,6 +81,7 @@ void TrackInformation::SetParticleInformation(const TrackInformation* aTrackInfo
 {
   particleDefinition = aTrackInfo->particleDefinition;
   particleName = aTrackInfo->particleName;
+  particlePDGid = aTrackInfo->particlePDGid;
   particleTrackID = aTrackInfo->particleTrackID;
   particlePosition = aTrackInfo->particlePosition;
   particleMomentum = aTrackInfo->particleMomentum;
@@ -88,6 +95,7 @@ void TrackInformation::SetParentInformation(const TrackInformation* aTrackInfo)
 {
   parentDefinition = aTrackInfo->particleDefinition;
   parentName = aTrackInfo->particleName;
+  parentPDGid = aTrackInfo->particlePDGid;
   parentTrackID = aTrackInfo->particleTrackID;
   parentPosition = aTrackInfo->particlePosition;
   parentMomentum = aTrackInfo->particleMomentum;
