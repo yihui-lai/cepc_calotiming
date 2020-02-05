@@ -9,7 +9,11 @@
 
 void CC_Ana(const char* inputfilename,const char* outputfilename) {
 
-  TH1F *hTotalE = new TH1F("hTotalE","energy total world (GeV)",100,0.,100.);
+  TH1F *hTotalE = new TH1F("hTotalE","energy total world (GeV)",600,0.,150.);
+  TH1F *hHcalPasE = new TH1F("hHcalPasE","energy HCAL passive (GeV)",600,0.,150.);
+  TH1F *hHcalActE = new TH1F("hHcalActE","ioninging HCAL energy passive (GeV)",600,0.,150.);
+  TH2F *hEcalHcal = new TH2F("hEcalHcal","ecal versus hcal passive ",600,0.,150.,600,0.,150.);
+
 
   TFile *f = new TFile(inputfilename);
   TTree *t1 = (TTree*)f->Get("tree");
@@ -95,6 +99,7 @@ void CC_Ana(const char* inputfilename,const char* outputfilename) {
   Int_t nentries = (Int_t)t1->GetEntries();
   for(Int_t i=0;i<nentries; i++) {
     t1->GetEntry(i);
+    /*
     std::cout<<endl<<"event number "<<i<<std::endl;
     std::cout<<"total energy deposited is "<<depositedEnergyTotal<<std::endl;
     std::cout<<"world energy deposited is "<<depositedEnergyWorld<<std::endl;
@@ -110,19 +115,27 @@ void CC_Ana(const char* inputfilename,const char* outputfilename) {
     std::cout<<"Ecal gap energy deposited is "<<depositedEnergyEcalGap<<std::endl;
     std::cout<<"Ecal det energy deposited is "<<depositedEnergyEcalDet<<std::endl;
     std::cout<<"Solenoid energy deposited is "<<depositedEnergySolenoid<<std::endl;
+    */
     float eee=depositedEnergyTiming_f+depositedEnergyTiming_r+depositedEnergyECAL_f+depositedEnergyECAL_r+depositedEnergyHCALAct+depositedEnergyHCALPas+depositedEnergyWorld+depositedEnergyServices+depositedEnergyTimingGap+depositedEnergyEcalGap+depositedEnergyEcalDet+depositedEnergySolenoid;
     float fff=depositedEnergyTotal+depositedEnergyEscapeWorld;
-    std::cout<<" sum in detectors is "<<eee<<std::endl;
-    std::cout<<" deposited plus escaped is "<<fff<<std::endl;
-    double ggg=20.-fff;
-    std::cout<<" mystery is "<<ggg<<std::endl;
+    float ecaltotal=depositedEnergyTiming_f+depositedEnergyTiming_r+depositedEnergyECAL_f+depositedEnergyECAL_r;
+    //std::cout<<" sum in detectors is "<<eee<<std::endl;
+    //std::cout<<" deposited plus escaped is "<<fff<<std::endl;
+
     hTotalE->Fill(depositedEnergyTotal);
+    hHcalPasE->Fill(depositedEnergyHCALPas);
+    hHcalActE->Fill(depositedEnergyHCALPas-depositedIonEnergyHCALPas);
+    hEcalHcal->Fill(depositedEnergyHCALPas,ecaltotal);
+		    
   }
 
   f->Close();
 
   TFile * out = new TFile(outputfilename,"RECREATE");
   hTotalE->Write();
+  hHcalPasE->Write();
+  hHcalActE->Write();
+  hEcalHcal->Write();
   out->Close();
 
 }
