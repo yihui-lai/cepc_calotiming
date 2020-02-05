@@ -62,22 +62,35 @@ public:
   int nTracksTRK[6];
 
   //integrated energy in each longitudinal layer
-  float depositedEnergyTotal;
   float depositedEnergyEscapeWorld;
 
+  float depositedEnergyTotal;
   float depositedEnergyTiming_f;
   float depositedEnergyTiming_r;
   float depositedEnergyECAL_f;
   float depositedEnergyECAL_r;
   float depositedEnergyHCALAct;
   float depositedEnergyHCALPas;
-
   float depositedEnergyServices;
   float depositedEnergyTimingGap;
   float depositedEnergyEcalGap;
   float depositedEnergyEcalDet;
   float depositedEnergySolenoid;
+  float depositedEnergyWorld;
 
+  float depositedIonEnergyTotal;
+  float depositedIonEnergyTiming_f;
+  float depositedIonEnergyTiming_r;
+  float depositedIonEnergyECAL_f;
+  float depositedIonEnergyECAL_r;
+  float depositedIonEnergyHCALAct;
+  float depositedIonEnergyHCALPas;
+  float depositedIonEnergyServices;
+  float depositedIonEnergyTimingGap;
+  float depositedIonEnergyEcalGap;
+  float depositedIonEnergyEcalDet;
+  float depositedIonEnergySolenoid;
+  float depositedIonEnergyWorld;
   
 
   int tot_phot_cer_Timing_f;
@@ -87,7 +100,7 @@ public:
   int tot_phot_cer_HCAL;
 
 
-  float depositedEnergyWorld;
+
 
   float Edep_Tracker_layer[6];
 

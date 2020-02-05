@@ -6,12 +6,12 @@
 # initialization of G4GeneralParticleSource
 
 # cosmics
-/gps/energy 1 GeV
+/gps/energy 20 GeV
 #/gps/particle mu-
-/gps/particle pi-
+#/gps/particle pi-
 
 #/gps/particle gamma
-#/gps/particle e-
+/gps/particle e-
 
 /gps/pos/type Plane
 /gps/pos/shape Square

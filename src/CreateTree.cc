@@ -72,6 +72,24 @@ CreateTree::CreateTree (TString name)
   this -> GetTree() -> Branch("depositedEnergyEcalDet",     	&this->depositedEnergyEcalDet,         	"depositedEnergyEcalDet/F");
   this -> GetTree() -> Branch("depositedEnergySolenoid",     	&this->depositedEnergySolenoid,         	"depositedEnergySolenoid/F");
 
+
+  this -> GetTree() -> Branch("depositedIonEnergyTotal",     	&this->depositedIonEnergyTotal,        	"depositedIonEnergyTotal/F");
+
+  this -> GetTree() -> Branch("depositedIonEnergyTiming_f",  &this->depositedIonEnergyTiming_f,         "depositedIonEnergyTiming_f/F");
+  this -> GetTree() -> Branch("depositedIonEnergyTiming_r",  &this->depositedIonEnergyTiming_r,         "depositedIonEnergyTiming_r/F");
+  this -> GetTree() -> Branch("depositedIonEnergyECAL_f",     &this->depositedIonEnergyECAL_f,            "depositedIonEnergyECAL_f/F");
+  this -> GetTree() -> Branch("depositedIonEnergyECAL_r",     &this->depositedIonEnergyECAL_r,            "depositedIonEnergyECAL_r/F");
+  this -> GetTree() -> Branch("depositedIonEnergyHCALAct",       &this->depositedIonEnergyHCALAct,               "depositedIonEnergyHCALAct/F");
+  this -> GetTree() -> Branch("depositedIonEnergyHCALPas",       &this->depositedIonEnergyHCALPas,               "depositedIonEnergyHCALPas/F");
+
+  this -> GetTree() -> Branch("depositedIonEnergyWorld",     	&this->depositedIonEnergyWorld,         	"depositedIonEnergyWorld/F");
+  this -> GetTree() -> Branch("depositedIonEnergyTimingGap",     	&this->depositedIonEnergyTimingGap,         	"depositedIonEnergyTimingGap/F");
+  this -> GetTree() -> Branch("depositedIonEnergyServices",     	&this->depositedIonEnergyServices,         	"depositedIonEnergyServices/F");
+  this -> GetTree() -> Branch("depositedIonEnergyEcalGap",     	&this->depositedIonEnergyEcalGap,         	"depositedIonEnergyEcalGap/F");
+  this -> GetTree() -> Branch("depositedIonEnergyEcalDet",     	&this->depositedIonEnergyEcalDet,         	"depositedIonEnergyEcalDet/F");
+  this -> GetTree() -> Branch("depositedIonEnergySolenoid",     	&this->depositedIonEnergySolenoid,         	"depositedIonEnergySolenoid/F");
+
+
   //single channels
   this -> GetTree() -> Branch("Edep_Tracker_layer", 		&this->Edep_Tracker_layer,    		"Edep_Tracker_layer[6]/F");
   this -> GetTree() -> Branch("Edep_Timing_f_ch", 		&this->Edep_Timing_f_ch,    		"Edep_Timing_f_ch[18]/F");
@@ -96,7 +114,7 @@ CreateTree::CreateTree (TString name)
   h_phot_cer_lambda_ECAL_f    = new TH1F("h_phot_cer_lambda_ECAL_f","",1250, 0.,1250.);
   h_phot_cer_lambda_ECAL_r    = new TH1F("h_phot_cer_lambda_ECAL_r","",1250, 0.,1250.);
   h_phot_cer_lambda_HCAL	   = new TH1F("h_phot_cer_lambda_HCAL","",1250, 0.,1250.);
-  h_phot_cer_parentID = new TH1F("h_phot_cer_parentID","",2000,-1000,1000);
+  h_phot_cer_parentID = new TH1F("h_phot_cer_parentID","",600,-300,300);
 
 
   
@@ -147,9 +165,7 @@ void CreateTree::Clear()
 {
   Event	= 0;
   
-  depositedEnergyTotal = 0.;
-  depositedEnergyEscapeWorld=0.;
-  nTracksT1 = 0;
+nTracksT1 = 0;
   nTracksT2 = 0;
   nTracksE1 = 0;
   nTracksE2 = 0;
@@ -159,12 +175,36 @@ void CreateTree::Clear()
 	nTracksTRK[iLayer] = 0;
   }
 
+  depositedEnergyEscapeWorld=0.;
+
+  depositedEnergyTotal = 0.;
   depositedEnergyTiming_f = 0.;
   depositedEnergyTiming_r = 0.;
   depositedEnergyECAL_f = 0.;
   depositedEnergyECAL_r = 0.;
   depositedEnergyHCALAct = 0.;
   depositedEnergyHCALPas = 0.;
+  depositedEnergyWorld = 0.;
+  depositedEnergyServices = 0.;
+  depositedEnergyTimingGap = 0.;
+  depositedEnergyEcalGap = 0.;
+  depositedEnergyEcalDet = 0.;
+  depositedEnergySolenoid = 0.;
+
+  depositedIonEnergyTotal = 0.;
+  depositedIonEnergyTiming_f = 0.;
+  depositedIonEnergyTiming_r = 0.;
+  depositedIonEnergyECAL_f = 0.;
+  depositedIonEnergyECAL_r = 0.;
+  depositedIonEnergyHCALAct = 0.;
+  depositedIonEnergyHCALPas = 0.;
+  depositedIonEnergyWorld = 0.;
+  depositedIonEnergyServices = 0.;
+  depositedIonEnergyTimingGap = 0.;
+  depositedIonEnergyEcalGap = 0.;
+  depositedIonEnergyEcalDet = 0.;
+  depositedIonEnergySolenoid = 0.;
+
 
   tot_phot_cer_Timing_f = 0.;
   tot_phot_cer_Timing_r = 0.;
@@ -188,12 +228,6 @@ void CreateTree::Clear()
 	Edep_ECAL_r_ch[iCh] = 0.;
   }
 
-  depositedEnergyWorld = 0.;
-  depositedEnergyServices = 0.;
-  depositedEnergyTimingGap = 0.;
-  depositedEnergyEcalGap = 0.;
-  depositedEnergyEcalDet = 0.;
-  depositedEnergySolenoid = 0.;
   
 
   
