@@ -11,8 +11,8 @@ void CC_Ana(const char* inputfilename,const char* outputfilename) {
 
   TH1F *hTotalE = new TH1F("hTotalE","energy total world (GeV)",600,0.,150.);
   TH1F *hHcalPasE = new TH1F("hHcalPasE","energy HCAL passive (GeV)",600,0.,150.);
-  TH1F *hHcalActE = new TH1F("hHcalActE","ioninging HCAL energy passive (GeV)",600,0.,150.);
-  TH2F *hEcalHcal = new TH2F("hEcalHcal","ecal versus hcal passive ",600,0.,150.,600,0.,150.);
+  TH1F *hHcalActE = new TH1F("hHcalActE","ioninging HCAL energy active (GeV)",600,0.,1.);
+  TH2F *hEcalHcal = new TH2F("hEcalHcal","ecal versus hcal passive ",600,0.,50.,600,0.,50.);
 
 
   TFile *f = new TFile(inputfilename);
@@ -124,7 +124,7 @@ void CC_Ana(const char* inputfilename,const char* outputfilename) {
 
     hTotalE->Fill(depositedEnergyTotal);
     hHcalPasE->Fill(depositedEnergyHCALPas);
-    hHcalActE->Fill(depositedEnergyHCALPas-depositedIonEnergyHCALPas);
+    hHcalActE->Fill(depositedEnergyHCALAct-depositedIonEnergyHCALAct);
     hEcalHcal->Fill(depositedEnergyHCALPas,ecaltotal);
 		    
   }
