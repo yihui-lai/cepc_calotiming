@@ -99,6 +99,9 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
 //  G4VSolid* thePreS = thePrePV->GetLogicalVolume()->GetSolid();
     
   G4int nStep = theTrack -> GetCurrentStepNumber();
+
+  G4int TrPDFid= theTrack->GetDefinition()->GetPDGEncoding();
+
   
 //        cout << " step length = " << theStep->GetStepLength() << endl;
   //-------------
@@ -111,9 +114,14 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
 
     G4double energy = theStep->GetTotalEnergyDeposit();
     G4double energyIon = theStep->GetNonIonizingEnergyDeposit();
+    G4double energyElec=0.;
+    if(abs(TrPDFid)==11) {
+      energyElec=energy-energyIon;
+    }
     //std::cout<<"prename "<<thePrePVName<<" postname "<<thePostPVName<<" edep "<<energy<<" final "<<CreateTree::Instance()->depositedEnergyTotal<<std::endl;
     CreateTree::Instance() -> depositedEnergyTotal += energy/GeV;
     CreateTree::Instance() -> depositedIonEnergyTotal += energyIon/GeV;
+    CreateTree::Instance() -> depositedElecEnergyTotal += energyElec/GeV;
 
     //    if(thePrePVName.contains("world")) {
       bool haha4=((theStep->GetPostStepPoint())->GetStepStatus())==fWorldBoundary;
@@ -270,6 +278,7 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
     {
       CreateTree::Instance()->depositedEnergyTiming_f += energy/GeV;
       CreateTree::Instance()->depositedIonEnergyTiming_f += energyIon/GeV;
+      CreateTree::Instance()->depositedElecEnergyTiming_f += energyElec/GeV;
       for (int iBar = 0; iBar<18; iBar++)
       {
 	if (thePrePVName == Form("corePV_front_%d", iBar)) CreateTree::Instance()->Edep_Timing_f_ch[iBar] += energy/GeV;
@@ -279,6 +288,7 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
     {
       CreateTree::Instance()->depositedEnergyTiming_r += energy/GeV;
       CreateTree::Instance()->depositedIonEnergyTiming_r += energyIon/GeV;
+      CreateTree::Instance()->depositedElecEnergyTiming_r += energyElec/GeV;
       for (int iBar = 0; iBar<18; iBar++)
       {
 	if (thePrePVName == Form("corePV_rear_%d", iBar)) CreateTree::Instance()->Edep_Timing_r_ch[iBar] += energy/GeV;
@@ -290,6 +300,7 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
     {
       CreateTree::Instance()->depositedEnergyECAL_f += energy/GeV;
       CreateTree::Instance()->depositedIonEnergyECAL_f += energyIon/GeV;
+      CreateTree::Instance()->depositedElecEnergyECAL_f += energyElec/GeV;
       for (int iCh = 0; iCh<2500; iCh++)
       {
 	if (thePrePVName == Form("ecalCrystalP_f_%d", iCh)) CreateTree::Instance()->Edep_ECAL_f_ch[iCh] += energy/GeV;
@@ -299,6 +310,7 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
     {
       CreateTree::Instance()->depositedEnergyECAL_r += energy/GeV;
       CreateTree::Instance()->depositedIonEnergyECAL_r += energyIon/GeV;
+      CreateTree::Instance()->depositedElecEnergyECAL_r += energyElec/GeV;
       for (int iCh = 0; iCh<2500; iCh++)
       {
 	if (thePrePVName == Form("ecalCrystalP_r_%d", iCh)) CreateTree::Instance()->Edep_ECAL_r_ch[iCh] += energy/GeV;
@@ -311,6 +323,7 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
     {
        CreateTree::Instance()->depositedEnergyHCALAct += energy/GeV;
        CreateTree::Instance()->depositedIonEnergyHCALAct += energyIon/GeV;
+       CreateTree::Instance()->depositedElecEnergyHCALAct += energyElec/GeV;
 //      for (int iLayer = 0; iLayer<100; iLayer++)
   //    {
 //	if (thePrePVName == Form("ecalCrystalP_f_%d", iCh)) CreateTree::Instance()->Edep_ECAL_f_ch[iLayer] += energy/GeV;
@@ -320,6 +333,7 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
     {
        CreateTree::Instance()->depositedEnergyHCALPas += energy/GeV;
        CreateTree::Instance()->depositedIonEnergyHCALPas += energyIon/GeV;
+       CreateTree::Instance()->depositedElecEnergyHCALPas += energyElec/GeV;
 //      for (int iLayer = 0; iLayer<100; iLayer++)
   //    {
 //	if (thePrePVName == Form("ecalCrystalP_f_%d", iCh)) CreateTree::Instance()->Edep_ECAL_f_ch[iLayer] += energy/GeV;
@@ -331,6 +345,7 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
     {
       CreateTree::Instance() -> depositedEnergyWorld += energy/GeV;
       CreateTree::Instance() -> depositedIonEnergyWorld += energyIon/GeV;
+      CreateTree::Instance() -> depositedElecEnergyWorld += energyElec/GeV;
     }
 
 
@@ -339,6 +354,7 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
     {
       CreateTree::Instance() -> depositedEnergyServices += energy/GeV;
       CreateTree::Instance() -> depositedIonEnergyServices += energyIon/GeV;
+      CreateTree::Instance() -> depositedElecEnergyServices += energyElec/GeV;
     }
 
     
@@ -347,6 +363,7 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
     {
       CreateTree::Instance() -> depositedEnergyTimingGap += energy/GeV;
       CreateTree::Instance() -> depositedIonEnergyTimingGap += energyIon/GeV;
+      CreateTree::Instance() -> depositedElecEnergyTimingGap += energyElec/GeV;
     }
 
 
@@ -354,6 +371,7 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
     {
       CreateTree::Instance() -> depositedEnergyEcalGap += energy/GeV;
       CreateTree::Instance() -> depositedIonEnergyEcalGap += energyIon/GeV;
+      CreateTree::Instance() -> depositedElecEnergyEcalGap += energyElec/GeV;
     }
 
 
@@ -361,6 +379,7 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
     {
       CreateTree::Instance() -> depositedEnergyEcalDet += energy/GeV;
       CreateTree::Instance() -> depositedIonEnergyEcalDet += energyIon/GeV;
+      CreateTree::Instance() -> depositedElecEnergyEcalDet += energyElec/GeV;
     }
 
 
@@ -368,6 +387,7 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
     {
       CreateTree::Instance() -> depositedEnergySolenoid += energy/GeV;
       CreateTree::Instance() -> depositedIonEnergySolenoid += energyIon/GeV;
+      CreateTree::Instance() -> depositedElecEnergySolenoid += energyElec/GeV;
     }
 
 

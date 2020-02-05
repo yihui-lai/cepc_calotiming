@@ -91,6 +91,20 @@ public:
   float depositedIonEnergyEcalDet;
   float depositedIonEnergySolenoid;
   float depositedIonEnergyWorld;
+
+  float depositedElecEnergyTotal;
+  float depositedElecEnergyTiming_f;
+  float depositedElecEnergyTiming_r;
+  float depositedElecEnergyECAL_f;
+  float depositedElecEnergyECAL_r;
+  float depositedElecEnergyHCALAct;
+  float depositedElecEnergyHCALPas;
+  float depositedElecEnergyServices;
+  float depositedElecEnergyTimingGap;
+  float depositedElecEnergyEcalGap;
+  float depositedElecEnergyEcalDet;
+  float depositedElecEnergySolenoid;
+  float depositedElecEnergyWorld;
   
 
   int tot_phot_cer_Timing_f;

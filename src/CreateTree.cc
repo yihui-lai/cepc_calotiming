@@ -81,13 +81,28 @@ CreateTree::CreateTree (TString name)
   this -> GetTree() -> Branch("depositedIonEnergyECAL_r",     &this->depositedIonEnergyECAL_r,            "depositedIonEnergyECAL_r/F");
   this -> GetTree() -> Branch("depositedIonEnergyHCALAct",       &this->depositedIonEnergyHCALAct,               "depositedIonEnergyHCALAct/F");
   this -> GetTree() -> Branch("depositedIonEnergyHCALPas",       &this->depositedIonEnergyHCALPas,               "depositedIonEnergyHCALPas/F");
-
   this -> GetTree() -> Branch("depositedIonEnergyWorld",     	&this->depositedIonEnergyWorld,         	"depositedIonEnergyWorld/F");
   this -> GetTree() -> Branch("depositedIonEnergyTimingGap",     	&this->depositedIonEnergyTimingGap,         	"depositedIonEnergyTimingGap/F");
   this -> GetTree() -> Branch("depositedIonEnergyServices",     	&this->depositedIonEnergyServices,         	"depositedIonEnergyServices/F");
   this -> GetTree() -> Branch("depositedIonEnergyEcalGap",     	&this->depositedIonEnergyEcalGap,         	"depositedIonEnergyEcalGap/F");
   this -> GetTree() -> Branch("depositedIonEnergyEcalDet",     	&this->depositedIonEnergyEcalDet,         	"depositedIonEnergyEcalDet/F");
   this -> GetTree() -> Branch("depositedIonEnergySolenoid",     	&this->depositedIonEnergySolenoid,         	"depositedIonEnergySolenoid/F");
+
+
+  this -> GetTree() -> Branch("depositedElecEnergyTotal",     	&this->depositedElecEnergyTotal,        	"depositedElecEnergyTotal/F");
+
+  this -> GetTree() -> Branch("depositedElecEnergyTiming_f",  &this->depositedElecEnergyTiming_f,         "depositedElecEnergyTiming_f/F");
+  this -> GetTree() -> Branch("depositedElecEnergyTiming_r",  &this->depositedElecEnergyTiming_r,         "depositedElecEnergyTiming_r/F");
+  this -> GetTree() -> Branch("depositedElecEnergyECAL_f",     &this->depositedElecEnergyECAL_f,            "depositedElecEnergyECAL_f/F");
+  this -> GetTree() -> Branch("depositedElecEnergyECAL_r",     &this->depositedElecEnergyECAL_r,            "depositedElecEnergyECAL_r/F");
+  this -> GetTree() -> Branch("depositedElecEnergyHCALAct",       &this->depositedElecEnergyHCALAct,               "depositedElecEnergyHCALAct/F");
+  this -> GetTree() -> Branch("depositedElecEnergyHCALPas",       &this->depositedElecEnergyHCALPas,               "depositedElecEnergyHCALPas/F");
+  this -> GetTree() -> Branch("depositedElecEnergyWorld",     	&this->depositedElecEnergyWorld,         	"depositedElecEnergyWorld/F");
+  this -> GetTree() -> Branch("depositedElecEnergyTimingGap",     	&this->depositedElecEnergyTimingGap,         	"depositedElecEnergyTimingGap/F");
+  this -> GetTree() -> Branch("depositedElecEnergyServices",     	&this->depositedElecEnergyServices,         	"depositedElecEnergyServices/F");
+  this -> GetTree() -> Branch("depositedElecEnergyEcalGap",     	&this->depositedElecEnergyEcalGap,         	"depositedElecEnergyEcalGap/F");
+  this -> GetTree() -> Branch("depositedElecEnergyEcalDet",     	&this->depositedElecEnergyEcalDet,         	"depositedElecEnergyEcalDet/F");
+  this -> GetTree() -> Branch("depositedElecEnergySolenoid",     	&this->depositedElecEnergySolenoid,         	"depositedElecEnergySolenoid/F");
 
 
   //single channels
@@ -204,6 +219,21 @@ nTracksT1 = 0;
   depositedIonEnergyEcalGap = 0.;
   depositedIonEnergyEcalDet = 0.;
   depositedIonEnergySolenoid = 0.;
+
+
+  depositedElecEnergyTotal = 0.;
+  depositedElecEnergyTiming_f = 0.;
+  depositedElecEnergyTiming_r = 0.;
+  depositedElecEnergyECAL_f = 0.;
+  depositedElecEnergyECAL_r = 0.;
+  depositedElecEnergyHCALAct = 0.;
+  depositedElecEnergyHCALPas = 0.;
+  depositedElecEnergyWorld = 0.;
+  depositedElecEnergyServices = 0.;
+  depositedElecEnergyTimingGap = 0.;
+  depositedElecEnergyEcalGap = 0.;
+  depositedElecEnergyEcalDet = 0.;
+  depositedElecEnergySolenoid = 0.;
 
 
   tot_phot_cer_Timing_f = 0.;
