@@ -100,7 +100,7 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
     
   G4int nStep = theTrack -> GetCurrentStepNumber();
 
-  G4int TrPDFid= theTrack->GetDefinition()->GetPDGEncoding();
+  G4int TrPDGid= theTrack->GetDefinition()->GetPDGEncoding();
 
   
 //        cout << " step length = " << theStep->GetStepLength() << endl;
@@ -115,10 +115,12 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
     G4double energy = theStep->GetTotalEnergyDeposit();
     G4double energyIon = theStep->GetNonIonizingEnergyDeposit();
     G4double energyElec=0.;
-    if(abs(TrPDFid)==11) {
+
+    if(abs(TrPDGid)==11) {
       energyElec=energy-energyIon;
     }
-    //std::cout<<"prename "<<thePrePVName<<" postname "<<thePostPVName<<" edep "<<energy<<" final "<<CreateTree::Instance()->depositedEnergyTotal<<std::endl;
+    //std::cout<<"TrPDGid energy energyIon enegyElec are "<<TrPDGid<<" "<<energy<<" "<<energyIon<<" "<<energyElec<<std::endl;
+
     CreateTree::Instance() -> depositedEnergyTotal += energy/GeV;
     CreateTree::Instance() -> depositedIonEnergyTotal += energyIon/GeV;
     CreateTree::Instance() -> depositedElecEnergyTotal += energyElec/GeV;
@@ -196,9 +198,9 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
       if( !propagateCerenkov ) theTrack->SetTrackStatus(fKillTrackAndSecondaries);      
 
     }
-    
+  }
 
-
+    else{
 
    //count tracks before SCEPCAL at the tracker layers
     if (  thePrePVName.contains("world") && thePostPVName.contains("trackerPV_Layer")    )	// interface between T1 and T2

@@ -13,16 +13,40 @@ void CC_Ana(const char* inputfilename,const char* outputfilename) {
 
   TFile *f = new TFile(inputfilename);
   TTree *t1 = (TTree*)f->Get("tree");
+  float depositedEnergyEscapeWorld;
+
   float depositedEnergyTotal,depositedEnergyWorld;
   float depositedEnergyTiming_f,depositedEnergyTiming_r;
   float depositedEnergyECAL_f,depositedEnergyECAL_r;
   float depositedEnergyHCALAct,depositedEnergyHCALPas;
-  float depositedEnergyEscapeWorld;
   float depositedEnergyServices;
   float depositedEnergyTimingGap;
   float depositedEnergyEcalGap;
   float depositedEnergyEcalDet;
   float depositedEnergySolenoid;
+
+  float depositedElecEnergyTotal,depositedElecEnergyWorld;
+  float depositedElecEnergyTiming_f,depositedElecEnergyTiming_r;
+  float depositedElecEnergyECAL_f,depositedElecEnergyECAL_r;
+  float depositedElecEnergyHCALAct,depositedElecEnergyHCALPas;
+  float depositedElecEnergyServices;
+  float depositedElecEnergyTimingGap;
+  float depositedElecEnergyEcalGap;
+  float depositedElecEnergyEcalDet;
+  float depositedElecEnergySolenoid;
+
+
+  float depositedIonEnergyTotal,depositedIonEnergyWorld;
+  float depositedIonEnergyTiming_f,depositedIonEnergyTiming_r;
+  float depositedIonEnergyECAL_f,depositedIonEnergyECAL_r;
+  float depositedIonEnergyHCALAct,depositedIonEnergyHCALPas;
+  float depositedIonEnergyServices;
+  float depositedIonEnergyTimingGap;
+  float depositedIonEnergyEcalGap;
+  float depositedIonEnergyEcalDet;
+  float depositedIonEnergySolenoid;
+
+  t1->SetBranchAddress("depositedEnergyEscapeWorld",&depositedEnergyEscapeWorld);
 
   t1->SetBranchAddress("depositedEnergyTotal",&depositedEnergyTotal);
   t1->SetBranchAddress("depositedEnergyWorld",&depositedEnergyWorld);
@@ -32,12 +56,40 @@ void CC_Ana(const char* inputfilename,const char* outputfilename) {
   t1->SetBranchAddress("depositedEnergyECAL_r",&depositedEnergyECAL_r);
   t1->SetBranchAddress("depositedEnergyHCALAct",&depositedEnergyHCALAct);
   t1->SetBranchAddress("depositedEnergyHCALPas",&depositedEnergyHCALPas);
-  t1->SetBranchAddress("depositedEnergyEscapeWorld",&depositedEnergyEscapeWorld);
   t1->SetBranchAddress("depositedEnergyServices",&depositedEnergyServices);
   t1->SetBranchAddress("depositedEnergyTimingGap",&depositedEnergyTimingGap);
   t1->SetBranchAddress("depositedEnergyEcalGap",&depositedEnergyEcalGap);
   t1->SetBranchAddress("depositedEnergyEcalDet",&depositedEnergyEcalDet);
   t1->SetBranchAddress("depositedEnergySolenoid",&depositedEnergySolenoid);
+
+  t1->SetBranchAddress("depositedElecEnergyTotal",&depositedElecEnergyTotal);
+  t1->SetBranchAddress("depositedElecEnergyWorld",&depositedElecEnergyWorld);
+  t1->SetBranchAddress("depositedElecEnergyTiming_f",&depositedElecEnergyTiming_f);
+  t1->SetBranchAddress("depositedElecEnergyTiming_r",&depositedElecEnergyTiming_r);
+  t1->SetBranchAddress("depositedElecEnergyECAL_f",&depositedElecEnergyECAL_f);
+  t1->SetBranchAddress("depositedElecEnergyECAL_r",&depositedElecEnergyECAL_r);
+  t1->SetBranchAddress("depositedElecEnergyHCALAct",&depositedElecEnergyHCALAct);
+  t1->SetBranchAddress("depositedElecEnergyHCALPas",&depositedElecEnergyHCALPas);
+  t1->SetBranchAddress("depositedElecEnergyServices",&depositedElecEnergyServices);
+  t1->SetBranchAddress("depositedElecEnergyTimingGap",&depositedElecEnergyTimingGap);
+  t1->SetBranchAddress("depositedElecEnergyEcalGap",&depositedElecEnergyEcalGap);
+  t1->SetBranchAddress("depositedElecEnergyEcalDet",&depositedElecEnergyEcalDet);
+  t1->SetBranchAddress("depositedElecEnergySolenoid",&depositedElecEnergySolenoid);
+
+
+  t1->SetBranchAddress("depositedIonEnergyTotal",&depositedIonEnergyTotal);
+  t1->SetBranchAddress("depositedIonEnergyWorld",&depositedIonEnergyWorld);
+  t1->SetBranchAddress("depositedIonEnergyTiming_f",&depositedIonEnergyTiming_f);
+  t1->SetBranchAddress("depositedIonEnergyTiming_r",&depositedIonEnergyTiming_r);
+  t1->SetBranchAddress("depositedIonEnergyECAL_f",&depositedIonEnergyECAL_f);
+  t1->SetBranchAddress("depositedIonEnergyECAL_r",&depositedIonEnergyECAL_r);
+  t1->SetBranchAddress("depositedIonEnergyHCALAct",&depositedIonEnergyHCALAct);
+  t1->SetBranchAddress("depositedIonEnergyHCALPas",&depositedIonEnergyHCALPas);
+  t1->SetBranchAddress("depositedIonEnergyServices",&depositedIonEnergyServices);
+  t1->SetBranchAddress("depositedIonEnergyTimingGap",&depositedIonEnergyTimingGap);
+  t1->SetBranchAddress("depositedIonEnergyEcalGap",&depositedIonEnergyEcalGap);
+  t1->SetBranchAddress("depositedIonEnergyEcalDet",&depositedIonEnergyEcalDet);
+  t1->SetBranchAddress("depositedIonEnergySolenoid",&depositedIonEnergySolenoid);
 
 
   Int_t nentries = (Int_t)t1->GetEntries();
