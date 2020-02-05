@@ -5,17 +5,17 @@
 #include "TH2.h"
 #include "TRandom.h"
 
+const float sampling_fraction=100.;
 
 void CC_Ana(const char* inputfilename,const char* outputfilename) {
 
-  TH1F *hTotalE = new TH1F("hTotalE","energy total world (GeV)",600,0.,150.);
-
-
-  TH1F *hHcalPasE = new TH1F("hHcalPasE","energy HCAL passive (GeV)",600,0.,150.);
-  TH1F *hHcalActE = new TH1F("hHcalActE","ioninging HCAL energy active (GeV)",600,0.,1.);
-  TH2F *hEcalHcal = new TH2F("hEcalHcal","ecal versus hcal passive ",600,0.,50.,600,0.,50.);
-  TH2F *hEcalEcalem = new TH2F("hEcalEcalem","ecal versus ecal",600,0.,50.,600,0.,1.2);
-  TH2F *hEcalfEcalem = new TH2F("hEcalfEcalem","em frac versus ecal hcal ",600,0.,50.,600,0.,1.2);
+  TH1F *hTotalE = new TH1F("hTotalE","energy total world /true",600,0.,1.1);
+  TH1F *hestE = new TH1F("hestE","energy estimated /true",600,0.,1.1);
+  TH1F *hHcalPasE = new TH1F("hHcalPasE","energy HCAL passive /true ",600,0.,1.1);
+  TH1F *hHcalActE = new TH1F("hHcalActE","ioninging HCAL energy active /true",600,0.,0.1);
+  TH2F *hEcalHcal = new TH2F("hEcalHcal","ecal versus hcal passive /true ",600,0.,1.1,600,0.,1.1);
+  TH2F *hEcalEcalem = new TH2F("hEcalEcalem","ecal versus ecal em /true",600,0.,1.1,600,0.,1.1);
+  TH2F *hEcalfEcalem = new TH2F("hEcalfEcalem","em frac versus ecal/true ",600,0.,1.1,600,0.,1.1);
   TH1F *hcerTimingf= new TH1F("hcerTimingf","number cerenkov photons timing front",1000,0.,1000.);
   TH1F *hcerTimingr= new TH1F("hcerTimingr","number cerenkov photons timing read",1000,0.,1000.);
   TH1F *hcerECALf= new TH1F("hcerECALf","number cerenkov photons ECAL front",1000,0.,1000.);
@@ -119,9 +119,12 @@ void CC_Ana(const char* inputfilename,const char* outputfilename) {
   Int_t nentries = (Int_t)t1->GetEntries();
   for(Int_t i=0;i<nentries; i++) {
     t1->GetEntry(i);
+    float trueE=9999999.;
+    if((*inputMomentum)[3]>0) trueE=(*inputMomentum)[3];
     
     std::cout<<endl<<"event number "<<i<<std::endl;
-    std::cout<<(*inputMomentum)[0]<<","<<(*inputMomentum)[1]<<","<<(*inputMomentum)[2]<<","<<(*inputMomentum)[3]<<std::endl;
+    //std::cout<<(*inputMomentum)[0]<<","<<(*inputMomentum)[1]<<","<<(*inputMomentum)[2]<<","<<(*inputMomentum)[3]<<std::endl;
+    //std::cout<<"total energy deposited is "<<depositedEnergyTotal<<std::endl;
     /*
     std::cout<<"total energy deposited is "<<depositedEnergyTotal<<std::endl;
     std::cout<<"world energy deposited is "<<depositedEnergyWorld<<std::endl;
@@ -144,14 +147,23 @@ void CC_Ana(const char* inputfilename,const char* outputfilename) {
     //std::cout<<" sum in detectors is "<<eee<<std::endl;
     //std::cout<<" deposited plus escaped is "<<fff<<std::endl;
 
-    hTotalE->Fill(depositedEnergyTotal);
-    hHcalPasE->Fill(depositedEnergyHCALPas);
-    hHcalActE->Fill(depositedEnergyHCALAct-depositedIonEnergyHCALAct);
-    hEcalHcal->Fill(depositedEnergyHCALPas,ecaltotal);
+    float estE= (depositedEnergyTiming_f-depositedIonEnergyTiming_f)+
+      (depositedEnergyTiming_r-depositedIonEnergyTiming_r)+
+      (depositedEnergyECAL_f-depositedIonEnergyECAL_f)+
+      (depositedEnergyECAL_r-depositedIonEnergyECAL_r)+
+      sampling_fraction*(depositedEnergyHCALAct-depositedIonEnergyHCALAct);
+    std::cout<<"est E is "<<estE<<std::endl;
+
+
+    hTotalE->Fill(depositedEnergyTotal/trueE);
+    hestE->Fill(estE/trueE);
+    hHcalPasE->Fill(depositedEnergyHCALPas/trueE);
+    hHcalActE->Fill((depositedEnergyHCALAct-depositedIonEnergyHCALAct)/trueE);
+    hEcalHcal->Fill(depositedEnergyHCALPas/trueE,ecaltotal/trueE);
     float yyy=depositedEnergyECAL_f+depositedEnergyECAL_r;
     float yy2=depositedElecEnergyECAL_f+depositedElecEnergyECAL_r;
-    hEcalEcalem->Fill(yyy,yy2);
-    if(yyy>0) hEcalfEcalem->Fill(yyy,yy2/yyy);
+    hEcalEcalem->Fill(yyy/trueE,yy2/trueE);
+    if(yyy>0) hEcalfEcalem->Fill(yyy/trueE,yy2/yyy);
     if(depositedEnergyHCALAct>0) hHCALActPas->Fill(depositedEnergyHCALPas/depositedEnergyHCALAct);
 
     hcerTimingf->Fill(tot_phot_cer_Timing_f);
@@ -167,6 +179,7 @@ void CC_Ana(const char* inputfilename,const char* outputfilename) {
 
   TFile * out = new TFile(outputfilename,"RECREATE");
   hTotalE->Write();
+  hestE->Write();
   hHcalPasE->Write();
   hHcalActE->Write();
   hEcalHcal->Write();
