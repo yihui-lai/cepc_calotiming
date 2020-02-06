@@ -203,11 +203,11 @@ void CC_Analyzer(bool debug) {
   }
   else {
     std::cout<<"running on normal files"<<std::endl;
-  CC_Ana("pions_1GeV.root","pions_1GeV_hists.root");
-  CC_Ana("pions_5GeV.root","pions_5GeV_hists.root");
+    //  CC_Ana("pions_1GeV.root","pions_1GeV_hists.root");
+    //CC_Ana("pions_5GeV.root","pions_5GeV_hists.root");
   CC_Ana("pions_10GeV.root","pions_10GeV_hists.root");
   CC_Ana("pions_20GeV.root","pions_20GeV_hists.root");
   CC_Ana("pions_50GeV.root","pions_50GeV_hists.root");
-  CC_Ana("pions_100GeV.root","pions_100GeV_hists.root");
+  //CC_Ana("pions_100GeV.root","pions_100GeV_hists.root");
   }
 }
