@@ -84,6 +84,7 @@ void res() {
 
 
   TF1 *f2 = new TF1("f2","sqrt([0]*[0]/x+[1]*[1]/x/x+[2]*[2])");
+  TF1 *calice = new TF1("calice","sqrt(0.57*0.57/x+0.016*0.016)",5,100);  // arXiv:1507.05892 taken from pg 21 but needs to be checked
 
   double arrres[npoints];
   for (int k=0;k<npoints;k++) {arrres[k]=rrres[k][0];}
@@ -112,7 +113,7 @@ void res() {
 
   TH1 *frame = new TH1F("frame","",1000,0,120);
   frame->SetMinimum(0.);
-  frame->SetMaximum(1.);
+  frame->SetMaximum(0.5);
   frame->SetStats(0);
   frame->GetXaxis()->SetTitle("true energy (GeV)");
   frame->GetXaxis()->SetTickLength(0.02);
@@ -121,6 +122,8 @@ void res() {
   frame->GetYaxis()->SetLabelSize(0.03);
   frame->Draw("");
 
+  calice->Draw("same");
+  lgd->AddEntry(calice, "calice detector resolution", "l");
 
   g1->SetMarkerColor(kBlue);
   g1->SetMarkerStyle(21);
