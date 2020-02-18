@@ -317,7 +317,6 @@ void SteppingAction::UserSteppingAction(const G4Step *theStep)
 
     step_global_time->push_back(thePrePoint->GetGlobalTime());
     step_local_time->push_back(thePrePoint->GetLocalTime());
-    step_
     step_Edep_ECAL->push_back(energy);
     step_IonEdep_ECAL->push_back(energyIon);
     step_ElecEdep_ECAL->push_back(energyElec);
