@@ -55,6 +55,13 @@ public:
   std::vector<float>* primaryMomE1 ; // Px Py Pz E
   std::vector<float>* primaryPosE1 ; // x, y, z
 
+  std::vector<float>* step_global_time ; 
+  std::vector<float>* step_local_time ; 
+  std::vector<float>* step_Edep_ECAL;
+  std::vector<float>* step_IonEdep_ECAL;
+  std::vector<float>* step_ElecEdep_ECAL;
+  std::vector<int>* step_ECAL_ID;
+
   int nTracksT1;
   int nTracksT2;
   int nTracksE1;
@@ -123,6 +130,12 @@ public:
   float Edep_Timing_r_ch[18];
   float Edep_ECAL_f_ch[2500];
   float Edep_ECAL_r_ch[2500];
+
+  float IonEdep_ECAL_f_ch[2500];
+  float IonEdep_ECAL_r_ch[2500];
+
+  float ElecEdep_ECAL_f_ch[2500];
+  float ElecEdep_ECAL_r_ch[2500];
 
 
 

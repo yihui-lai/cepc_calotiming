@@ -47,6 +47,24 @@ CreateTree::CreateTree (TString name)
   this -> GetTree() -> Branch("primaryPosE1", 	"vector<float>", &primaryPosE1);
   this -> GetTree() -> Branch("primaryMomE1",	"vector<float>", &primaryMomE1);  
 
+
+
+  step_global_time = new vector<float>();  
+  step_local_time = new vector<float>(); 
+  step_Edep_ECAL = new vector<float>();
+  step_IonEdep_ECAL = new vector<float>();
+  step_ElecEdep_ECAL = new vector<float>();
+  step_ECAL_ID = new vector<int>();
+
+
+  this -> GetTree() -> Branch("step_global_time",    "vector<float>", &step_global_time);
+  this -> GetTree() -> Branch("step_local_time",    "vector<float>", &step_local_time);
+  this -> GetTree() -> Branch("step_Edep_ECAL",    "vector<float>", &step_Edep_ECAL);
+  this -> GetTree() -> Branch("step_IonEdep_ECAL",    "vector<float>", &step_IonEdep_ECAL);
+  this -> GetTree() -> Branch("step_ElecEdep_ECAL",    "vector<float>", &step_ElecEdep_ECAL);
+  this -> GetTree() -> Branch("step_ECAL_ID",    "vector<int>", &step_ECAL_ID);
+
+
   this -> GetTree() -> Branch("nTracksT1",        &this->nTracksT1,               "nTracksT1/I");
   this -> GetTree() -> Branch("nTracksT2",        &this->nTracksT2,               "nTracksT2/I");
   this -> GetTree() -> Branch("nTracksE1",        &this->nTracksE1,               "nTracksE1/I");
@@ -109,8 +127,13 @@ CreateTree::CreateTree (TString name)
   this -> GetTree() -> Branch("Edep_Tracker_layer", 		&this->Edep_Tracker_layer,    		"Edep_Tracker_layer[6]/F");
   this -> GetTree() -> Branch("Edep_Timing_f_ch", 		&this->Edep_Timing_f_ch,    		"Edep_Timing_f_ch[18]/F");
   this -> GetTree() -> Branch("Edep_Timing_r_ch", 		&this->Edep_Timing_r_ch,    		"Edep_Timing_r_ch[18]/F");
-  this -> GetTree() -> Branch("Edep_ECAL_f_ch",   		&this->Edep_ECAL_f_ch,      			"Edep_ECAL_f_ch[100]/F");
-  this -> GetTree() -> Branch("Edep_ECAL_r_ch",   		&this->Edep_ECAL_r_ch,      			"Edep_ECAL_r_ch[100]/F");
+  this -> GetTree() -> Branch("Edep_ECAL_f_ch",   		&this->Edep_ECAL_f_ch,      			"Edep_ECAL_f_ch[2500]/F");
+  this -> GetTree() -> Branch("Edep_ECAL_r_ch",   		&this->Edep_ECAL_r_ch,      			"Edep_ECAL_r_ch[2500]/F");
+
+  this -> GetTree() -> Branch("IonEdep_ECAL_f_ch",   		&this->IonEdep_ECAL_f_ch,      			"IonEdep_ECAL_f_ch[2500]/F");
+  this -> GetTree() -> Branch("IonEdep_ECAL_r_ch",   		&this->IonEdep_ECAL_r_ch,      			"IonEdep_ECAL_r_ch[2500]/F");
+  this -> GetTree() -> Branch("ElecEdep_ECAL_f_ch",   		&this->ElecEdep_ECAL_f_ch,      			"ElecEdep_ECAL_f_ch[2500]/F");
+  this -> GetTree() -> Branch("ElecEdep_ECAL_r_ch",   		&this->ElecEdep_ECAL_r_ch,      			"ElecEdep_ECAL_r_ch[2500]/F");
   
 
   //Cerenkov photons
@@ -252,10 +275,16 @@ nTracksT1 = 0;
 	Edep_Timing_f_ch[iBar] = 0.;
 	Edep_Timing_r_ch[iBar] = 0.;
   }
-  for (int iCh = 0; iCh<100; iCh++)
+  for (int iCh = 0; iCh<2500; iCh++)
   {
 	Edep_ECAL_f_ch[iCh] = 0.;
 	Edep_ECAL_r_ch[iCh] = 0.;
+
+  IonEdep_ECAL_f_ch[iCh] = 0.;
+  IonEdep_ECAL_r_ch[iCh] = 0.;
+
+  ElecEdep_ECAL_f_ch[iCh] = 0.;
+  ElecEdep_ECAL_r_ch[iCh] = 0.;
   }
 
   
@@ -275,7 +304,20 @@ nTracksT1 = 0;
     primaryMomE1 -> at(i) = 0.;
   }
 
+  for (int i = 0 ; i < 3 ; ++i) 
+  {
+    inputInitialPosition -> at(i) = 0.;
+    primaryPosT1 -> at(i) = 0.;
+    primaryPosE1 -> at(i) = 0.;
 
+  }
+
+  step_global_time->clear();  
+  step_local_time->clear(); 
+  step_Edep_ECAL->clear();
+  step_IonEdep_ECAL->clear();
+  step_ElecEdep_ECAL->clear();
+  step_ECAL_ID->clear();
 
 
 }

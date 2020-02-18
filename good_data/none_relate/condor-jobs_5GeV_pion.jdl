@@ -1,0 +1,10 @@
+universe = vanilla
+Executable = condor-executable_5GeV_pion.sh
+should_transfer_files = NO
+Requirements = TARGET.FileSystemDomain == "privnet"
+Output = /data/users/yihuilai/dualReadout/cepc_calotiming/condor_output/sce_$(cluster)_$(process).stdout
+Error =  /data/users/yihuilai/dualReadout/cepc_calotiming/condor_output/sce_$(cluster)_$(process).stderr
+Log =    /data/users/yihuilai/dualReadout/cepc_calotiming/condor_output/sce_$(cluster)_$(process).condor
+Arguments = SCE
+Queue 1
+
