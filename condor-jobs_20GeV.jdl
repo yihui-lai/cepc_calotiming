@@ -1,9 +1,0 @@
-universe = vanilla
-Executable = condor-executable_20GeV.sh
-should_transfer_files = NO
-Requirements = TARGET.FileSystemDomain == "privnet"
-Output = /data/users/eno/dualReadout/cepc_calotiming/condor_output/sce_$(cluster)_$(process).stdout
-Error =  /data/users/eno/dualReadout/cepc_calotiming/condor_output/sce_$(cluster)_$(process).stderr
-Log =    /data/users/eno/dualReadout/cepc_calotiming/condor_output/sce_$(cluster)_$(process).condor
-Arguments = SCE
-Queue 1
