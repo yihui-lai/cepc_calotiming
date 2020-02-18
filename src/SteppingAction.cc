@@ -316,11 +316,11 @@ void SteppingAction::UserSteppingAction(const G4Step *theStep)
 
 
     step_global_time->push_back(thePrePoint->GetGlobalTime());
+    step_global_z->push_back(global_z);
     step_local_time->push_back(thePrePoint->GetLocalTime());
     step_Edep_ECAL->push_back(energy);
     step_IonEdep_ECAL->push_back(energyIon);
     step_ElecEdep_ECAL->push_back(energyElec);
-
 
     //hcal
     if (thePrePVName.contains("hcalTile_layer"))

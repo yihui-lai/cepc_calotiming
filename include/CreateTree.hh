@@ -56,6 +56,7 @@ public:
   std::vector<float>* primaryPosE1 ; // x, y, z
 
   std::vector<float>* step_global_time ; 
+  std::vector<float>* step_global_z ; 
   std::vector<float>* step_local_time ; 
   std::vector<float>* step_Edep_ECAL;
   std::vector<float>* step_IonEdep_ECAL;

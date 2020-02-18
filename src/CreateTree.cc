@@ -50,6 +50,7 @@ CreateTree::CreateTree (TString name)
 
 
   step_global_time = new vector<float>();  
+  step_global_z = new vector<float>();  
   step_local_time = new vector<float>(); 
   step_Edep_ECAL = new vector<float>();
   step_IonEdep_ECAL = new vector<float>();
@@ -58,6 +59,7 @@ CreateTree::CreateTree (TString name)
 
 
   this -> GetTree() -> Branch("step_global_time",    "vector<float>", &step_global_time);
+  this -> GetTree() -> Branch("step_global_z",    "vector<float>", &step_global_z);
   this -> GetTree() -> Branch("step_local_time",    "vector<float>", &step_local_time);
   this -> GetTree() -> Branch("step_Edep_ECAL",    "vector<float>", &step_Edep_ECAL);
   this -> GetTree() -> Branch("step_IonEdep_ECAL",    "vector<float>", &step_IonEdep_ECAL);
